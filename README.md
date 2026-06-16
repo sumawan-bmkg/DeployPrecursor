@@ -1,3 +1,4 @@
+<img width="1536" height="1024" alt="deploy_abstract" src="https://github.com/user-attachments/assets/3fd6d2d9-5094-4394-88d8-17a07ad0add7" />
 # DeployPrecursor
 
 Production deployment repository for PIMES (Precursor Monitoring and Inference System).
