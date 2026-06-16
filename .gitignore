@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs
+logs/
+*.log
+
+# Runtime
+runtime/
+
+# Backups
+backups/
+
+# Raw data
+data/
+
+# Git
+.git/
+
+# Conda
+.env
+.venv
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db

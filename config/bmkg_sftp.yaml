@@ -1,0 +1,9 @@
+host: 202.90.198.224
+port: 22
+
+username: precursor
+password: otomatismon
+
+remote_root: /home/precursor/SEISMO/DATA
+local_root: /opt/pimes/data/raw
+

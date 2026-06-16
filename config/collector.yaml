@@ -1,0 +1,15 @@
+ssh:
+  host: 202.90.198.224
+  port: 4343
+  username: precursor
+  password: otomatismon
+
+storage:
+  raw_dir: /opt/pimes/data/raw
+
+database:
+  host: localhost
+  port: 5432
+  database: pimes
+  user: pimesuser
+  password: Precursor@2026!

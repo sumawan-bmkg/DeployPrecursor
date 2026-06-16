@@ -1,0 +1,31 @@
+# ScalogramV3 V8 Production Deployment
+# Conda Environment Specification for Ubuntu 24.04 LTS
+# Python Version: 3.10
+
+name: scalogramv3
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.10
+  - pip=23.0
+
+  # Core PyTorch dependencies
+  - pytorch=2.0.1
+  - torchvision=0.15.2
+  - cpuonly  # Remove this line if GPU is available
+
+  # Data processing libraries
+  - numpy=1.24.3
+  - pandas=2.0.3
+  - h5py=3.9.0
+
+  # Additional utilities
+  - pyyaml
+  - scipy
+
+  - pip:
+    # No additional pip packages needed
+    # All dependencies available via conda

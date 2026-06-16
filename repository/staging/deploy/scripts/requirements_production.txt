@@ -1,0 +1,41 @@
+# Production Requirements for ScalogramV3 V8
+# Ubuntu 24.04 Deployment
+
+# Core ML/DL
+torch>=1.13.0
+torchvision>=0.14.0
+torch_geometric>=2.0.0
+
+# Numerical computing
+numpy>=1.23.0
+scipy>=1.9.0
+
+# Wavelet transform
+PyWavelets>=1.4.0
+
+# Data handling
+pandas>=1.5.0
+h5py>=3.7.0
+
+# Progress bars
+tqdm>=4.64.0
+
+# Database
+psycopg2-binary>=2.9.0
+
+# Scheduling
+schedule>=1.2.0
+
+# Retry mechanism
+tenacity>=8.2.0
+
+# Monitoring
+psutil>=5.9.0
+flask>=2.3.0
+
+# System utilities
+paramiko>=2.11.0  # For SSH data fetching (if needed)
+
+# Optional: ORM (if using SQLAlchemy)
+# sqlalchemy>=2.0.0
+# alembic>=1.12.0

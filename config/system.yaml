@@ -1,0 +1,13 @@
+system:
+  name: PIMES-V8-PRODUCTION
+  version: 1.0.0
+
+deployment:
+  environment: production
+  server: precursor
+
+scheduler:
+  interval_minutes: 60
+
+stations:
+  total: 24

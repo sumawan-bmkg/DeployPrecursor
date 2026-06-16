@@ -1,0 +1,13 @@
+active_model:
+  name: V8
+
+models:
+  - name: V8
+    version: production
+    checkpoint: /opt/pimes/checkpoints/v3_v8_conv_fpr_best_weights.pth
+    status: active
+
+  - name: V9
+    version: experimental
+    checkpoint: null
+    status: inactive

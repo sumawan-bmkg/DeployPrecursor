@@ -1,0 +1,15 @@
+# ScalogramV3 V8 Production Deployment
+# Exact Python Dependencies for Ubuntu 24.04 LTS
+# Python Version: 3.8+ (tested with 3.12)
+
+# Core Dependencies (MANDATORY)
+torch==2.0.1
+torchvision==0.15.2
+numpy==1.24.3
+
+# Optional Dependencies (for data loading)
+pandas==2.0.3
+h5py==3.9.0
+
+# Note: No other dependencies required for production inference
+# All model components are implemented in pure PyTorch

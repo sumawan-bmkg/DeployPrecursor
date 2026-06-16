@@ -1,0 +1,26 @@
+database:
+  host: localhost
+  port: 5432
+  database: pimes
+  user: pimesuser
+  password: CHANGE_ME
+
+paths:
+  raw_data: /opt/pimes/data/raw
+  processed: /opt/pimes/data/processed
+  scalogram: /opt/pimes/data/scalogram
+  predictions: /opt/pimes/data/predictions
+
+model:
+  checkpoint: /opt/pimes/checkpoints/v3_v8_conv_fpr_best_weights.pth
+
+processing:
+  wavelet: cmor1.5-1.0
+  scales: 128
+  pooling_seconds: 60
+
+scheduler:
+  interval_minutes: 60
+
+stations:
+  registry: /opt/pimes/config/stations.csv
