@@ -1,0 +1,14 @@
+{
+  "id": "25f90ed6-5305-4749-b0bd-ebdc38eb93bc",
+  "ts": "2026-07-15T09:33:33.743093+00:00",
+  "event_type": "PROVENANCE_BUILT",
+  "component": "provenance",
+  "score": 100,
+  "status": "SUCCESS",
+  "severity": "INFO",
+  "manifest_hash": "1fa2dfd4a7d42736ec679b8fa4165fbfebc7b967e6b9fac018fc773e07aea9ef",
+  "details": {
+    "chain_id": "734463cf",
+    "artifacts": 12
+  }
+}

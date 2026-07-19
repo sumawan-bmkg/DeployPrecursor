@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}BOCC — Data Readiness{% endblock %}
+{% block content %}
+<style>
+.dr-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; margin-bottom:24px; }
+.dr-card { background:var(--card-bg,#1e293b); border-radius:12px; padding:20px; border:1px solid var(--border,#334155); }
+.dr-card .value { font-size:1.6rem; font-weight:700; font-family:monospace; }
+.dr-card .label { font-size:.82rem; color:#94a3b8; }
+.bar { height:8px; background:#1e293b; border-radius:4px; margin-top:8px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:4px; transition:width .5s; }
+</style>
+<div class="page-header"><h1>Data Readiness Audit</h1><p>FSOVC Phase 1 — Complete data readiness for blind test 2026</p></div>
+
+<div class="dr-grid" id="drGrid"></div>
+
+<div class="card"><div class="card-header"><div class="card-title">Component Readiness</div></div>
+<div class="table-container"><table><thead><tr><th>Component</th><th>Status</th><th>Score</th><th>Details</th></tr></thead>
+<tbody id="compTable"></tbody></table></div></div>
+
+<div class="card mt-16"><div class="card-header"><div class="card-title">Station Coverage</div></div>
+<div class="table-container"><table><thead><tr><th>Station</th><th>Priors</th><th>Signatures</th><th>Status</th></tr></thead>
+<tbody id="stationTable"></tbody></table></div></div>
+
+<div class="card mt-16"><div class="card-header"><div class="card-title">Blind Test Readiness</div></div>
+<div class="table-container"><table><thead><tr><th>Check</th><th>Result</th><th>Notes</th></tr></thead>
+<tbody id="btTable"></tbody></table></div></div>
+
+<script>
+const stations = ["ALR","AMB","BTN","BYN","CLP","DNP","GSI","GTO","JYP","KINDEX","KPY","LPS","LUT","LWA","LWK","MJB","MLB","PLR","PLU","SBG","SCN","SKB","SMG","SMI","SRO","TES","TNG","TNT","TRT","YOG"];
+const priors = ["ALR","AMB","CLP","GTO","KPY","LPS","LUT","LWA","LWK","MLB","PLU","ROT","SBG","SCN","SKB","SMI","SRG","SRO","TNT","TRT","YOG"];
+const sigs = ["ALR","AMB","BTN","BYN","CLP","DNP","GSI","GTO","JYP","KINDEX","KPY","LPS","LUT","LWA","LWK","MJB","MLB","PLR","PLU","SBG","SCN","SKB","SMG","SMI","SRO","TES","TNG","TNT"];
+
+const ready = stations.filter(s=>priors.includes(s) && sigs.includes(s));
+const partial = stations.filter(s=>(priors.includes(s) || sigs.includes(s)) && !ready.includes(s));
+const missing = stations.filter(s=>!priors.includes(s) && !sigs.includes(s));
+
+const components = [
+  {name:"Earthquake Catalog", status:"READY", score:100, detail:"1356 events, M 3.6-8.4, 177 days"},
+  {name:"Prior Models (21)", status:"READY", score:21, detail:"21 stations with .pt prior files"},
+  {name:"Station Signatures (28)", status:"READY", score:28, detail:"28 RDMC station signatures"},
+  {name:"Raw Waveform", status:"PARTIAL", score:40, detail:"2 H5 scalograms (52KB) — needs audit"},
+  {name:"Collector", status:"RUNNING", score:90, detail:"PID active, scheduler active"},
+  {name:"Golden Dataset", status:"READY", score:100, detail:"PLU, ALR test events present"},
+  {name:"Burn-in", status:"PARTIAL", score:50, detail:"2/24 cycles, process died"},
+  {name:"SEOS Evidence", status:"READY", score:100, detail:"10 evidence files"},
+  {name:"OSC Campaign", status:"RUNNING", score:80, detail:"Day 1, cron active"},
+  {name:"CEPSL", status:"RUNNING", score:80, detail:"39 snapshots archived"},
+];
+
+document.getElementById('drGrid').innerHTML = components.map(c=>`
+  <div class="dr-card">
+    <div class="label">${c.name}</div>
+    <div class="value ${c.status==='READY'?'good':c.status==='RUNNING'?'good':c.status==='PARTIAL'?'warn':'bad'}">${c.status}</div>
+    <div class="label">${c.detail}</div>
+    <div class="bar"><div class="bar-fill" style="width:${c.score}%;background:${c.score>=80?'#10b981':c.score>=50?'#f59e0b':'#ef4444'}"></div></div>
+  </div>
+`).join('');
+
+document.getElementById('compTable').innerHTML = components.map(c=>`
+  <tr><td>${c.name}</td><td class="${c.status==='READY'||c.status==='RUNNING'?'good':'warn'}">${c.status}</td><td>${c.score}%</td><td>${c.detail}</td></tr>
+`).join('');
+
+document.getElementById('stationTable').innerHTML = stations.map(s=>{
+  const hasP = priors.includes(s);
+  const hasS = sigs.includes(s);
+  return `<tr><td>${s}</td><td>${hasP?'Yes':'No'}</td><td>${hasS?'Yes':'No'}</td><td class="${hasP&&hasS?'good':'warn'}">${hasP&&hasS?'READY':hasP||hasS?'PARTIAL':'MISSING'}</td></tr>`;
+}).join('');
+
+const btChecks = [
+  {check:"Catalog events", result:"1,356 events", notes:"All M>=3.6"},
+  {check:"Station prior models", result:"21/30 stations", notes:"Coverage 70%"},
+  {check:"Station signatures", result:"28/30 stations", notes:"Coverage 93%"},
+  {check:"Ready stations", result:`${ready.length}/30`, notes:"Has both prior + sig"},
+  {check:"Partial stations", result:`${partial.length}/30`, notes:"Missing one component"},
+  {check:"Collector", result:"RUNNING", notes:"Scheduler active"},
+  {check:"Golden Dataset", result:"2 events", notes:"PLU + ALR"},
+  {check:"Data period", result:"Dec 2025 - Jun 2026", notes:"177 days"},
+  {check:"Overall eligibility", result:"PARTIAL", notes:"Need more raw waveform data"},
+];
+document.getElementById('btTable').innerHTML = btChecks.map(b=>`
+  <tr><td>${b.check}</td><td>${b.result}</td><td>${b.notes}</td></tr>
+`).join('');
+</script>
+{% endblock %}

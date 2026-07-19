@@ -1,0 +1,26 @@
+{
+  "id": "3781935a-7226-40f6-99f0-5ef9abf8761e",
+  "ts": "2026-07-15T09:33:52.902381+00:00",
+  "event_type": "CSQ_IMPORT",
+  "component": "erb",
+  "score": 0,
+  "status": "COLLECTED",
+  "severity": "INFO",
+  "manifest_hash": "d9427b2b446a327949446ee1358c02e5520d7415e78982aa2d33cc437982ef3a",
+  "details": {
+    "erb_uuid": "838d2bf7-a331-47e0-9877-9efb4d0e69b6",
+    "timestamp": "2026-07-15T09:27:23.701854+00:00",
+    "overall_score": 6.825852498541965,
+    "component_scores": {
+      "collector": 0,
+      "runtime": 8.258524985419655,
+      "prediction": 0.0,
+      "drift": 60,
+      "dashboard": 0.0
+    },
+    "drift_status": "DRIFT_DETECTED",
+    "shadow_readiness": false,
+    "production_readiness": false,
+    "manifest_sha256": "eec79da19bb9e4647cdcb7d85e565a33664d5692de5b2ad6015432f5ce4323aa"
+  }
+}

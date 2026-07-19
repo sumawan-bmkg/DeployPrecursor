@@ -1,0 +1,147 @@
+[
+  {
+    "uuid": "734463cf-3b1a-4518-8bdc-e4b362d9204b",
+    "name": "collector_data",
+    "stage": "collector",
+    "parent_uuid": null,
+    "timestamp": "2026-07-15T09:33:33.742215+00:00",
+    "content_hash": "52cb9b36bdf942e3b4aac55e9f651a36aa1b460a740fc5c881756d1423d59c14",
+    "metadata": {
+      "station": "all",
+      "total_files": 464.43898391228475
+    }
+  },
+  {
+    "uuid": "22581820-7a6a-42c2-b9c6-e8406a03fcc1",
+    "name": "raw",
+    "stage": "pipeline",
+    "parent_uuid": "734463cf-3b1a-4518-8bdc-e4b362d9204b",
+    "timestamp": "2026-07-15T09:33:33.742302+00:00",
+    "content_hash": "9643a40968e9dd9878f070bceef5b13ec4ffb0e8f603381b898a95ff4807d21b",
+    "metadata": {
+      "status": "UNKNOWN",
+      "score": 0
+    }
+  },
+  {
+    "uuid": "0a334de9-55f5-4241-bb60-872d6bd0fb80",
+    "name": "qc",
+    "stage": "pipeline",
+    "parent_uuid": "22581820-7a6a-42c2-b9c6-e8406a03fcc1",
+    "timestamp": "2026-07-15T09:33:33.742332+00:00",
+    "content_hash": "dde51dec2cbd2400e9bc3b50713121e49aaeb89729b18b3cdf2371ade2b24b7a",
+    "metadata": {
+      "status": "UNKNOWN",
+      "score": 0
+    }
+  },
+  {
+    "uuid": "e48f4cfa-a776-407f-9651-b401afd696ef",
+    "name": "pc3",
+    "stage": "pipeline",
+    "parent_uuid": "0a334de9-55f5-4241-bb60-872d6bd0fb80",
+    "timestamp": "2026-07-15T09:33:33.742352+00:00",
+    "content_hash": "815112a18411733302df87a7ab8d03a9616bbafdb96630a920689ef7dc791ca7",
+    "metadata": {
+      "status": "UNKNOWN",
+      "score": 0
+    }
+  },
+  {
+    "uuid": "e173f75a-c2fa-49d0-9f2f-b0342c699a04",
+    "name": "cwt",
+    "stage": "pipeline",
+    "parent_uuid": "e48f4cfa-a776-407f-9651-b401afd696ef",
+    "timestamp": "2026-07-15T09:33:33.742368+00:00",
+    "content_hash": "8b6716aca39428e04c9f7a66d30f46d3c8485d5c5894aba420af3f624c76c7cc",
+    "metadata": {
+      "status": "UNKNOWN",
+      "score": 0
+    }
+  },
+  {
+    "uuid": "57445d3a-882c-4088-9fd9-c463b94dd4f6",
+    "name": "scalogram",
+    "stage": "pipeline",
+    "parent_uuid": "e173f75a-c2fa-49d0-9f2f-b0342c699a04",
+    "timestamp": "2026-07-15T09:33:33.742382+00:00",
+    "content_hash": "2ee70afe5bc6c59648745423a266b67974dc881276373c4698b92036f2131542",
+    "metadata": {
+      "status": "UNKNOWN",
+      "score": 0
+    }
+  },
+  {
+    "uuid": "626e845b-ecc1-420d-a2d2-fa7866148106",
+    "name": "tensor",
+    "stage": "pipeline",
+    "parent_uuid": "57445d3a-882c-4088-9fd9-c463b94dd4f6",
+    "timestamp": "2026-07-15T09:33:33.742396+00:00",
+    "content_hash": "7e0d6bbe9a604dd532947dd56470a282ec329e0ff4ef0a80c9128a36e8a77cce",
+    "metadata": {
+      "status": "ACTIVE",
+      "score": 80
+    }
+  },
+  {
+    "uuid": "e5177ada-2a10-42e2-bb5e-068660f0779b",
+    "name": "feature",
+    "stage": "pipeline",
+    "parent_uuid": "626e845b-ecc1-420d-a2d2-fa7866148106",
+    "timestamp": "2026-07-15T09:33:33.742409+00:00",
+    "content_hash": "f0e1861e3b516f5f850c0daecd349ca1c85506f856690aae429ce9ee079eecd4",
+    "metadata": {
+      "status": "UNKNOWN",
+      "score": 0
+    }
+  },
+  {
+    "uuid": "5fc47f50-94e6-4d72-8c2a-a92896ad53f3",
+    "name": "embedding",
+    "stage": "pipeline",
+    "parent_uuid": "e5177ada-2a10-42e2-bb5e-068660f0779b",
+    "timestamp": "2026-07-15T09:33:33.742422+00:00",
+    "content_hash": "d23521534deff7528f07fd668050332d83c3f8b4395f7e8ebc3b07dda11d0d13",
+    "metadata": {
+      "status": "UNKNOWN",
+      "score": 0
+    }
+  },
+  {
+    "uuid": "88a74062-74ed-42cf-8f6c-f1b6bf093b90",
+    "name": "inference",
+    "stage": "pipeline",
+    "parent_uuid": "5fc47f50-94e6-4d72-8c2a-a92896ad53f3",
+    "timestamp": "2026-07-15T09:33:33.742435+00:00",
+    "content_hash": "9cb768be41c400196bd8f59e7099c366251f6ca0daa3409c810d2c1f8eeb9a58",
+    "metadata": {
+      "status": "STALE",
+      "score": 97.42086200124687
+    }
+  },
+  {
+    "uuid": "5e2ce3eb-2aa7-4f42-b11b-c2823cf1f409",
+    "name": "prediction",
+    "stage": "pipeline",
+    "parent_uuid": "88a74062-74ed-42cf-8f6c-f1b6bf093b90",
+    "timestamp": "2026-07-15T09:33:33.742449+00:00",
+    "content_hash": "02f59c3ebc6a2f43422743f75d73a86d844bc7202bf99aa2d1eaa78ffed89a38",
+    "metadata": {
+      "status": "ACTIVE",
+      "score": 85
+    }
+  },
+  {
+    "uuid": "ea680c0b-2715-40db-805d-d81df0f5daa3",
+    "name": "prediction",
+    "stage": "output",
+    "parent_uuid": "5e2ce3eb-2aa7-4f42-b11b-c2823cf1f409",
+    "timestamp": "2026-07-15T09:33:33.742464+00:00",
+    "content_hash": "cea56ae9ca03217cea6b327e0aa02692b23046db1abc22505d55ab0c7f75d43f",
+    "metadata": {
+      "station": "all",
+      "magnitude": 0,
+      "confidence": 0
+    }
+  }
+]

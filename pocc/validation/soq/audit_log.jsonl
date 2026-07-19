@@ -1,0 +1,8 @@
+{"ts": "2026-07-15T09:16:35.256538+00:00", "event": "Q1_DATA", "score": 38.09210526315789, "details": {"total": 608, "success_rate": 26.973684210526315}}
+{"ts": "2026-07-15T09:16:35.934629+00:00", "event": "Q2_PIPELINE", "score": 8.261716976529856, "details": {"stages": 15, "healthy": 4}}
+{"ts": "2026-07-15T09:16:36.852768+00:00", "event": "Q3_PREDICTION", "score": 0.0, "details": {"sci": 0.0, "alerts": 0}}
+{"ts": "2026-07-15T09:16:37.635152+00:00", "event": "Q4_STABILITY", "score": 54.825, "details": {"mean": 17.65, "std": 0.0}}
+{"ts": "2026-07-15T09:16:39.719039+00:00", "event": "Q5_INFRASTRUCTURE", "score": 100.0, "details": {"checks": "9/9"}}
+{"ts": "2026-07-15T09:16:40.626552+00:00", "event": "Q6_OPERATOR", "score": 80.0, "details": {"passed": 4}}
+{"ts": "2026-07-15T09:16:41.560377+00:00", "event": "Q7_EXPLAINABILITY", "score": 83.33333333333334, "details": {"passed": 5}}
+{"ts": "2026-07-15T09:16:43.381236+00:00", "event": "Q8_ACCEPTANCE", "score": 90.0, "details": {"passed": "9/10"}}

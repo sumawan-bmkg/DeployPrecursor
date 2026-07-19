@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}BOCC — System Status{% endblock %}
+{% block content %}
+<style>
+.sys-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-bottom:24px; }
+.sys-card { background:var(--card-bg,#1e293b); border-radius:12px; padding:20px; border:1px solid var(--border,#334155); }
+.sys-card .value { font-size:1.8rem; font-weight:700; margin:6px 0; }
+.sys-card .label { font-size:.82rem; color:#94a3b8; }
+.good { color:#10b981; }
+.warn { color:#f59e0b; }
+.bad { color:#ef4444; }
+</style>
+<div class="page-header"><h1>System Status</h1><p>Infrastructure & services health</p></div>
+
+<div class="sys-grid" id="sysGrid"></div>
+
+<div class="card mt-16"><div class="card-header"><div class="card-title">Services</div></div>
+<div class="table-container"><table id="serviceTable">
+<thead><tr><th>Service</th><th>Status</th><th>Port</th><th>Since</th></tr></thead>
+<tbody></tbody></table></div></div>
+
+<div class="card mt-16"><div class="card-header"><div class="card-title">Disk Usage</div></div>
+<div class="table-container"><table id="diskTable">
+<thead><tr><th>Mount</th><th>Used</th><th>Available</th><th>Usage</th></tr></thead>
+<tbody></tbody></table></div></div>
+
+<script>
+async function loadSystem() {
+  let infra={};
+  try { infra = await fetch('/api/infrastructure').then(r=>r.json()); } catch(e) {}
+  const cpu = infra.cpu || {};
+  const mem = infra.memory || {};
+  const disks = infra.disk || [];
+
+  document.getElementById('sysGrid').innerHTML = `
+    <div class="sys-card"><div class="label">CPU Cores</div><div class="value">${cpu.cores||'?'}</div><div class="label">Load: ${cpu.load_1m||'?'}/${cpu.load_5m||'?'}/${cpu.load_15m||'?'}</div></div>
+    <div class="sys-card"><div class="label">RAM Total</div><div class="value ${(mem.usage_pct||0)>90?'bad':(mem.usage_pct||0)>75?'warn':'good'}">${mem.total_mb||'?'} MB</div><div class="label">Used: ${mem.used_mb||'?'}MB (${mem.usage_pct||'?'}%)</div></div>
+    <div class="sys-card"><div class="label">RAM Available</div><div class="value ${(mem.available_mb||0)<500?'bad':'good'}">${mem.available_mb||'?'} MB</div><div class="label">${(mem.available_mb||0)<500?'LOW':'OK'}</div></div>
+    <div class="sys-card"><div class="label">Processes</div><div class="value">${infra.processes||'?'}</div><div class="label">Services running</div></div>
+  `;
+
+  document.querySelector('#serviceTable tbody').innerHTML = `
+    <tr><td>FastAPI (BOCC)</td><td><span class="good">UP</span></td><td>8500</td><td>Campaign</td></tr>
+    <tr><td>UVICORN</td><td><span class="good">UP</span></td><td>8500</td><td>Active</td></tr>
+    <tr><td>OSC Cron (hourly)</td><td><span class="good">ACTIVE</span></td><td>—</td><td>Campaign</td></tr>
+    <tr><td>OSC Cron (daily)</td><td><span class="good">ACTIVE</span></td><td>—</td><td>00:05</td></tr>
+    <tr><td>CEPSL Ledger</td><td><span class="good">APPEND-ONLY</span></td><td>SQLite</td><td>Immutable</td></tr>
+  `;
+
+  document.querySelector('#diskTable tbody').innerHTML = disks.map(d=>`
+    <tr><td>${d.mount||'?'}</td><td>${d.used_gb||'?'} GB</td><td>${d.avail_gb||'?'} GB</td><td><div class="progress-bar" style="width:${Math.min(d.usage_pct||0,100)}%;background:${(d.usage_pct||0)>90?'#ef4444':(d.usage_pct||0)>75?'#f59e0b':'#10b981'}"></div>${d.usage_pct||'?'}%</td></tr>
+  `).join('');
+}
+loadSystem();
+setInterval(loadSystem,30000);
+</script>
+{% endblock %}

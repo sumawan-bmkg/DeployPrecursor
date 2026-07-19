@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-07-15T09:10:16.120105+00:00",
+  "queue": {
+    "WAITING": 0,
+    "RUNNING": 1,
+    "SUCCESS": 164,
+    "FAILED": 0,
+    "RETRY": 443,
+    "SKIPPED": 0,
+    "CORRUPTED": 0
+  },
+  "success_rate": 0.26973684210526316,
+  "manifest_status": "running"
+}

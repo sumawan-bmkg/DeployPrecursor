@@ -1,0 +1,77 @@
+# ScalogramV3 V8 Configuration
+# Gunakan file ini sebagai referensi parameter training dan inference
+
+model:
+  architecture: MultiTaskScalogramV3_v8
+  backbone: efficientnet_b1
+  gru_hidden: 256
+  gru_layers: 2
+  gru_proj_dim: 256        # 1280 -> 256 sebelum GRU (VRAM optimization)
+  fusion_dim: 512
+  projection_head_dim: 128  # SupCon projection
+  n_virtual_stations: 8
+  parameters_M: 9.4
+
+training:
+  batch_size: 2
+  grad_accum_steps: 4
+  effective_batch: 8
+  lr: 0.0001
+  lr_finetune: 0.00005     # untuk resume training
+  weight_decay: 0.01
+  epochs: 50
+  patience: 10             # EWS patience
+  early_stop_metric: "ews_score"  # F2 - FPR (mode MAX)
+
+loss:
+  detection: LabelSmoothingFocalLoss
+  focal_gamma: 2.0
+  label_smoothing_epsilon: 0.1
+  magnitude: CrossEntropyLoss
+  azimuth: SineCosineLoss
+  azimuth_weight: 2.0
+  supcon: SupConLoss
+  supcon_temperature: 0.07
+  lambda_supcon_phase1: 2.0   # epoch 1-5
+  lambda_supcon_phase2: 1.0   # epoch 6+
+
+scheduler:
+  type: ReduceLROnPlateau + CosineAnnealing
+  plateau_mode: max
+  plateau_factor: 0.5
+  plateau_patience: 2
+  cosine_eta_min: 0.000005
+
+data:
+  train_h5: scalogram_v8_true_negatives.h5
+  val_balanced_n_per_class: 72
+  tensor_shape: [3, 128, 1440]
+  freq_bins: 128
+  time_steps: 1440
+  ulf_band_bins: [0, 95]    # 0.001 - 0.1 Hz
+
+inference:
+  default_threshold: 0.30
+  threshold_method: f2_optimal  # atau dynamic_from_negatives
+  device: cpu                   # atau cuda
+  batch_size: 8
+
+checkpoint:
+  best_model: checkpoints/v3_v8_conv_fpr_best_weights.pth
+  best_epoch: 25
+  best_fpr: 0.125
+  best_ews: 0.829
+  best_f2: 0.954
+  best_recall: 0.972
+
+dataset_stats:
+  train:
+    total: 9456
+    negative: 7312
+    positive: 2144
+    neg_pos_ratio: 3.41
+  val:
+    total: 3200
+    negative: 1572
+    positive: 1628
+    neg_pos_ratio: 0.97

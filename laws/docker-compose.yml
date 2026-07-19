@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  laws-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bmkg-laws-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - LAWS_DEVICE=cuda
+      - LAWS_LOG_LEVEL=info
+      - WORKERS=1
+    volumes:
+      # Mount logs to host for persistence
+      - ./logs:/app/logs
+      # Optional: Mount checkpoints if you want to update models without rebuilding
+      # - ./checkpoints:/app/checkpoints
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  harvester:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bmkg-laws-harvester
+    restart: unless-stopped
+    environment:
+      - LAWS_API_URL=http://laws-api:8000
+    depends_on:
+      - laws-api
+    command: ["python", "app/utils/live_harvester.py"]
+    volumes:
+      - ./logs:/app/logs

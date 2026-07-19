@@ -1,0 +1,46 @@
+{
+  "id": "2f0e5540-ddbd-4c50-96db-db9486ac104a",
+  "ts": "2026-07-15T09:33:52.889643+00:00",
+  "event_type": "CSQ_IMPORT",
+  "component": "drift",
+  "score": 60,
+  "status": "COLLECTED",
+  "severity": "INFO",
+  "manifest_hash": "a1d19d293cbc5984529910b61074bf9b1953438d7a5de517c51b7f50b1e95e7c",
+  "details": {
+    "ts": "2026-07-15T09:27:22.555792+00:00",
+    "score": 60,
+    "drifts": [
+      {
+        "name": "prediction_collector",
+        "status": "STABLE",
+        "trend": 0.0,
+        "drift": 0.0,
+        "ewma": 0.0
+      },
+      {
+        "name": "prediction_runtime",
+        "status": "WARNING",
+        "trend": 8.258543656311781,
+        "drift": 8.258543656311781,
+        "ewma": 2.4775630968935345
+      },
+      {
+        "name": "prediction_prediction",
+        "status": "STABLE",
+        "trend": 0.0,
+        "drift": 0.0,
+        "ewma": 0.0
+      },
+      {
+        "name": "prediction_overall",
+        "status": "STABLE",
+        "trend": 0.8258543656311783,
+        "drift": 0.8258543656311783,
+        "ewma": 10.247756309689354
+      }
+    ],
+    "history_points": 2,
+    "status": "DRIFT_DETECTED"
+  }
+}

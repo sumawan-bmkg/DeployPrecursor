@@ -1,0 +1,7 @@
+{
+  "silhouette_cosine": -0.40885597467422485,
+  "silhouette_euclidean": -0.20314790308475494,
+  "davies_bouldin": 3.2648734519020537,
+  "trustworthiness_2d": 1.0,
+  "variance_ratio_pre_quiet": 5.795762538909912
+}

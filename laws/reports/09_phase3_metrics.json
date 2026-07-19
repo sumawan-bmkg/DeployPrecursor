@@ -1,0 +1,43 @@
+{
+  "weighted_faiss": {
+    "simple_mae": 0.4200830380512397,
+    "weighted_mae": 0.41951777073909374,
+    "delta": 0.0005652673121459562,
+    "per_tier": {
+      "M<5.5": {
+        "n": 518,
+        "simple_mae": 0.5066593604658561,
+        "weighted_mae": 0.5025018089986676,
+        "simple_bias": -0.506341941568382,
+        "weighted_bias": -0.5022394104813978
+      },
+      "M5.5-6.0": {
+        "n": 616,
+        "simple_mae": 0.200284625028635,
+        "weighted_mae": 0.2076872107270476,
+        "simple_bias": -0.062223773498039744,
+        "weighted_bias": -0.0633804751681043
+      },
+      "M>6.0": {
+        "n": 494,
+        "simple_mae": 0.6033811907053959,
+        "weighted_mae": 0.5966471090973148,
+        "simple_bias": 0.6033811907053959,
+        "weighted_bias": 0.5966471090973148
+      }
+    }
+  },
+  "time_to_event": {
+    "pearson_r": 0.02751323407585054,
+    "pearson_p": 0.2672255023622556,
+    "spearman_r": 0.029420254188874957,
+    "spearman_p": 0.2354613582645339
+  },
+  "api": {
+    "endpoints": [
+      "/api/v1/magnitude-assistance",
+      "/api/v1/health"
+    ],
+    "faiss_vectors": 1628
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "ts": "2026-07-15T09:16:35.934312+00:00",
+  "stages": 15,
+  "healthy": 4,
+  "avg_score": 30.98143866198696,
+  "score": 8.261716976529856,
+  "stage_hashes": {
+    "collector": "86b45285e28f6885",
+    "validation": "23104ad41233ccd3",
+    "reader": "ff60e2888033897e",
+    "signal": "1bab65805452265e",
+    "pc3": "0db2496e7960d7f5",
+    "tensor": "29202de0ab593049",
+    "inference": "020c506f479835d7",
+    "fusion": "bfd10991593cb027",
+    "prediction": "e196e753cf959b6a",
+    "evidence": "5ed929fb6f6cf44e",
+    "burnin": "bb5cdf9ad6951ccc",
+    "psep": "b20626d39d0b056d",
+    "shadow": "d52fb79c8eb51153",
+    "release": "d54bfc5803c792bd",
+    "dashboard": "3292f712d60cd705"
+  }
+}

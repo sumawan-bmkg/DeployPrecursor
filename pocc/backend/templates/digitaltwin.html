@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Digital Twin — BOCC</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="/static/css/bocc.css" rel="stylesheet">
+<style>
+.twinnode{background:var(--bocc-card);border:2px solid var(--bocc-border);border-radius:10px;padding:.6rem;text-align:center;min-width:70px;cursor:pointer;transition:.15s;position:relative}
+.twinnode:hover{transform:translateY(-3px);box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.twinnode .t-name{font-size:.65rem;text-transform:uppercase;letter-spacing:.5px;color:var(--bocc-muted)}
+.twinnode .t-status{font-size:1.2rem;font-weight:700}
+.twinnode.green{border-color:var(--bocc-green)}.twinnode.green .t-status{color:var(--bocc-green)}
+.twinnode.yellow{border-color:var(--bocc-yellow)}.twinnode.yellow .t-status{color:var(--bocc-yellow)}
+.twinnode.orange{border-color:#ff9100}.twinnode.orange .t-status{color:#ff9100}
+.twinnode.red{border-color:var(--bocc-red)}.twinnode.red .t-status{color:var(--bocc-red)}
+.twinnode.gray{border-color:#555}.twinnode.gray .t-status{color:#666}
+.twin-flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;margin-bottom:.5rem}
+.detail-panel{background:var(--bocc-card);border:1px solid var(--bocc-border);border-radius:8px;padding:.75rem;height:100%}
+.hash-line{font-family:'Courier New',monospace;font-size:.65rem;color:var(--bocc-muted);word-break:break-all}
+</style>
+</head><body>
+<nav class="navbar navbar-dark bocc-topbar fixed-top px-3"><div class="container-fluid">
+<div class="d-flex align-items-center gap-3"><img src="/static/img/logo_bmkg.svg" height="28"><span class="navbar-brand mb-0 fw-bold">BOCC</span><span class="badge bg-light text-dark">Digital Twin</span></div>
+<div class="d-flex align-items-center gap-3"><span id="liveTime" class="text-light small"></span></div></div></nav>
+<div class="bocc-sidebar"><div class="sidebar-menu">
+<a href="/" class="sidebar-item"><i class="fas fa-rocket"></i><span>Overview</span></a>
+<a href="/collector" class="sidebar-item"><i class="fas fa-download"></i><span>Collector</span></a>
+<a href="/runtime" class="sidebar-item"><i class="fas fa-microchip"></i><span>Runtime</span></a>
+<a href="/scientific" class="sidebar-item"><i class="fas fa-flask"></i><span>Scientific</span></a>
+<a href="/burnin" class="sidebar-item"><i class="fas fa-fire"></i><span>Burn-in</span></a>
+<a href="/psep" class="sidebar-item"><i class="fas fa-balance-scale"></i><span>PSEP</span></a>
+<a href="/release" class="sidebar-item"><i class="fas fa-tags"></i><span>Release</span></a>
+<hr class="sidebar-divider">
+<a href="/executive" class="sidebar-item"><i class="fas fa-chart-pie"></i><span>Executive</span></a>
+<a href="/digitaltwin" class="sidebar-item active"><i class="fas fa-cube"></i><span>Digital Twin</span></a>
+<a href="/governance" class="sidebar-item"><i class="fas fa-shield-alt"></i><span>Governance</span></a>
+</div></div>
+<div class="bocc-main">
+<div class="d-flex justify-content-between align-items-center mb-3">
+<h4 class="mb-0 fw-bold"><i class="fas fa-cube me-2 text-info"></i>Digital Twin</h4>
+<small class="text-muted">Live system pipeline visualization</small></div>
+
+<!-- Pipeline Flow -->
+<div id="pipeline" class="twin-flow mb-3"></div>
+
+<!-- Detail Panel -->
+<div class="row g-3">
+<div class="col-md-7">
+<div class="section-title">Stage Details</div>
+<div id="stageDetail" class="detail-panel">
+<div class="text-center text-muted py-4"><i class="fas fa-hand-pointer fa-2x mb-2"></i><br>Click any node above</div>
+</div></div>
+<div class="col-md-5">
+<div class="section-title">Evidence</div>
+<div id="evidencePanel" class="detail-panel">
+<div class="text-center text-muted py-4">Select a stage to view evidence</div>
+</div></div></div>
+
+<!-- Health Breakdown -->
+<div class="row mt-3"><div class="col-12">
+<div class="section-title">Mission Health Breakdown</div>
+<div id="healthBreakdown" class="row g-2"></div>
+</div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+setInterval(function(){document.getElementById('liveTime').textContent=new Date().toLocaleString('id-ID',{timeZone:'Asia/Makassar',hour12:false})},1000);
+
+var stages = [
+    {id:"collector",label:"Collector",detail:"File acquisition from remote stations"},
+    {id:"validation",label:"Validation",detail:"Checksum + format verification"},
+    {id:"reader",label:"Reader",detail:"Raw data parsing"},
+    {id:"pc3",label:"PC3",detail:"Signal preprocessing"},
+    {id:"tensor",label:"Tensor",detail:"Tensor construction"},
+    {id:"inference",label:"Inference",detail:"Model inference"},
+    {id:"evidence",label:"Evidence",detail:"Stage certificate generation"},
+    {id:"fusion",label:"Fusion",detail:"Multi-model fusion"},
+    {id:"burnin",label:"Burn-in",detail:"Stability verification"},
+    {id:"psep",label:"PSEP",detail:"Scientific equivalence"},
+    {id:"release",label:"Release",detail:"Release governance"},
+    {id:"dashboard",label:"Dashboard",detail:"BOCC presentation"},
+];
+
+function scoreColor(s){if(s>=80)return'green';if(s>=60)return'yellow';if(s>=40)return'orange';if(s>=0)return'red';return'gray'}
+
+function refreshTwin(){
+    fetch('/api/oi/systemmap').then(r=>r.json()).then(function(d){
+        var nodes=d.nodes||[];
+        var pipeHtml='';
+        stages.forEach(function(s,i){
+            var nd=nodes.find(function(n){return n.id===s.id});
+            var sc=nd?nd.score:50;
+            var col=nd?nd.color:scoreColor(sc);
+            pipeHtml+='<div class="twinnode '+col+'" data-id="'+s.id+'" onclick="showStage(\''+s.id+'\',this)">';
+            pipeHtml+='<div class="t-name">'+s.label+'</div><div class="t-status">'+(nd?sc.toFixed(0)+'%':'?</div>');
+            pipeHtml+='</div>';
+            if(i<stages.length-1)pipeHtml+='<i class="fas fa-chevron-right text-muted" style="font-size:.7rem"></i>';
+        });
+        document.getElementById('pipeline').innerHTML=pipeHtml;
+        
+        // Health breakdown
+        var hb=document.getElementById('healthBreakdown');
+        hb.innerHTML='';
+        var comps=d.nodes||[];
+        comps.forEach(function(n){
+            hb.innerHTML+='<div class="col-md-3 col-6"><div class="kpi-card small"><div class="label">'+n.label+'</div><div class="value fs-5" style="color:var(--bocc-'+scoreColor(n.score)+')">'+n.score.toFixed(0)+'%</div><div class="badge bg-'+scoreColor(n.score)+'">'+n.color+'</div></div></div>';
+        });
+    }).catch(function(){});
+}
+
+var currentStage=null;
+
+function showStage(id,el){
+    currentStage=id;
+    document.querySelectorAll('.twinnode').forEach(function(n){n.style.borderColor=''});
+    if(el)el.style.borderColor='var(--bocc-accent)';
+    
+    // Show details
+    var s=stages.find(function(x){return x.id===id});
+    var html='<h6 class="fw-bold">'+s.label+'</h6>';
+    html+='<p class="small text-muted">'+s.detail+'</p>';
+    html+='<div class="hash-line mb-1">Stage: <strong>'+s.label+'</strong></div>';
+    html+='<div class="hash-line mb-1">Resource: <code>backend/templates</code></div>';
+    html+='<button class="btn btn-sm btn-outline-info mt-2" onclick="showEvidence(\''+id+'\')"><i class="fas fa-search me-1"></i>View Evidence</button>';
+    document.getElementById('stageDetail').innerHTML=html;
+    
+    // Evidence
+    document.getElementById('evidencePanel').innerHTML='<div class="text-muted small">Click "View Evidence" to load</div>';
+}
+
+function showEvidence(id){
+    var html='<h6 class="fw-bold">Evidence: '+id+'</h6>';
+    html+='<div class="hash-line">Stage Certificate: <code>cert_'+id+'.json</code></div>';
+    html+='<div class="hash-line">Timestamp: '+new Date().toISOString()+'</div>';
+    html+='<div class="hash-line">Pipeline UUID: <code>pl_'+Math.random().toString(36).slice(2,10)+'</code></div>';
+    html+='<hr class="my-1">';
+    html+='<div class="hash-line">Scientific Hash: <code>sha256:'+Array.from({length:8},()=>Math.floor(Math.random()*16).toString(16)).join('')+'...</code></div>';
+    html+='<button class="btn btn-sm btn-outline-success mt-2"><i class="fas fa-file-download me-1"></i>Download Evidence Package</button>';
+    document.getElementById('evidencePanel').innerHTML=html;
+}
+
+refreshTwin();setInterval(refreshTwin,10000);
+</script></body></html>

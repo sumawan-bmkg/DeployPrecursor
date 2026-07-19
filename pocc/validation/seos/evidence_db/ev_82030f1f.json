@@ -1,0 +1,33 @@
+{
+  "id": "82030f1f-ab31-41bf-b494-7030cc3f8bff",
+  "ts": "2026-07-15T09:33:52.898830+00:00",
+  "event_type": "CSQ_IMPORT",
+  "component": "qualification",
+  "score": 6.825852498541965,
+  "status": "COLLECTED",
+  "severity": "INFO",
+  "manifest_hash": "eec79da19bb9e4647cdcb7d85e565a33664d5692de5b2ad6015432f5ce4323aa",
+  "details": {
+    "ts": "2026-07-15T09:27:23.701168+00:00",
+    "overall": 6.825852498541965,
+    "components": {
+      "collector": 0,
+      "runtime": 8.258524985419655,
+      "prediction": 0.0,
+      "drift": 60,
+      "dashboard": 0.0
+    },
+    "weights": {
+      "collector": 0.15,
+      "runtime": 0.1,
+      "prediction": 0.15,
+      "infrastructure": 0.1,
+      "dashboard": 0.1,
+      "engineering": 0.1,
+      "release": 0.05,
+      "governance": 0.05,
+      "burnin": 0.1,
+      "drift": 0.1
+    }
+  }
+}

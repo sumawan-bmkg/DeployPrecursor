@@ -1,0 +1,37 @@
+{
+  "readout_head": {
+    "architecture": "MLP(128->64->32->16->1)",
+    "cv_mae_mean": 0.44245687555753566,
+    "full_mae": 0.39931787259520646,
+    "full_rmse": 0.4856435211459311,
+    "full_r2": 0.11098553936434663,
+    "faiss_baseline_mae": 0.4201,
+    "improvement": 0.020782127404793516,
+    "improvement_pct": 4.9469477278727725,
+    "per_tier": {
+      "M<5.5": {
+        "mae": 0.4808003644637906,
+        "bias": 0.47725507482718316
+      },
+      "M5.5-6.0": {
+        "mae": 0.19306794831612628,
+        "bias": 0.04431440312800714
+      },
+      "M>6.0": {
+        "mae": 0.5710628575506453,
+        "bias": -0.5631108193599016
+      }
+    }
+  },
+  "hysteresis": {
+    "original_transitions": 12,
+    "hysteresis_transitions": 9,
+    "flicker_reduction_pct": 25.0,
+    "hold_steps": 10
+  },
+  "api": {
+    "version": "0.5.0",
+    "readout_head_model": "MLP(64,32,16)",
+    "hysteresis": true
+  }
+}

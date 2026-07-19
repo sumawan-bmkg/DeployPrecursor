@@ -1,0 +1,57 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pipeline Runtime — BOCC</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="/static/css/bocc.css" rel="stylesheet">
+<style>.pnode{background:var(--bocc-card);border:2px solid var(--bocc-border);border-radius:8px;padding:.5rem;min-width:80px;cursor:pointer;transition:.15s}.pnode:hover{transform:translateY(-2px);border-color:var(--bocc-accent)}.pnode .pn{font-size:.6rem;color:var(--bocc-muted);text-transform:uppercase}.pnode .pv{font-size:.9rem;font-weight:600}.pnode.green{border-color:var(--bocc-green)}.pnode.yellow{border-color:var(--bocc-yellow)}.pnode.red{border-color:var(--bocc-red)}.pnode.gray{border-color:#555}</style></head><body>
+<nav class="navbar navbar-dark bocc-topbar fixed-top px-3"><div class="container-fluid">
+<div class="d-flex align-items-center gap-3"><img src="/static/img/logo_bmkg.svg" height="28"><span class="navbar-brand mb-0 fw-bold">BOCC</span><span class="badge bg-light text-dark">Pipeline</span></div><span id="liveTime" class="text-light small"></span></div></nav>
+<div class="bocc-sidebar"><div class="sidebar-menu">
+<a href="/" class="sidebar-item"><i class="fas fa-rocket"></i><span>Overview</span></a>
+<a href="/engineering" class="sidebar-item"><i class="fas fa-microchip"></i><span>Engineering</span></a>
+<a href="/scientific-ops" class="sidebar-item"><i class="fas fa-flask"></i><span>Scientific Ops</span></a>
+<a href="/pipeline-runtime" class="sidebar-item active"><i class="fas fa-project-diagram"></i><span>Pipeline</span></a>
+<a href="/mission-timeline" class="sidebar-item"><i class="fas fa-clock"></i><span>Timeline</span></a>
+<a href="/alert-center" class="sidebar-item"><i class="fas fa-bell"></i><span>Alerts</span></a>
+<a href="/evidence-center" class="sidebar-item"><i class="fas fa-folder-open"></i><span>Evidence</span></a>
+<a href="/release-center" class="sidebar-item"><i class="fas fa-tags"></i><span>Release</span></a>
+<a href="/executive-center" class="sidebar-item"><i class="fas fa-chart-pie"></i><span>Executive</span></a>
+<hr class="sidebar-divider">
+<a href="/governance" class="sidebar-item"><i class="fas fa-shield-alt"></i><span>Governance</span></a>
+<a href="/digitaltwin" class="sidebar-item"><i class="fas fa-cube"></i><span>Digital Twin</span></a>
+</div></div>
+<div class="bocc-main"><h5 class="fw-bold mb-2"><i class="fas fa-project-diagram me-2 text-warning"></i>Pipeline Runtime — 15 Stages</h5>
+<div id="pipelineFlow" class="d-flex flex-wrap gap-1 align-items-center mb-3"></div>
+<div class="row g-2"><div class="col-md-8"><div class="section-title">Stage Detail</div><div id="stageDetail" class="kpi-card"><div class="text-center text-muted py-3">Click a stage</div></div></div>
+<div class="col-md-4"><div class="section-title">Evidence</div><div id="evidencePanel" class="kpi-card"><div class="text-center text-muted py-3">Select stage</div></div></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+setInterval(function(){document.getElementById('liveTime').textContent=new Date().toLocaleString('id-ID',{timeZone:'Asia/Makassar',hour12:false})},1000);
+function refreshPipe(){
+    fetch('/api/pipeline/stages').then(r=>r.json()).then(function(d){
+        var stages=d.stages||[];
+        var html='';
+        stages.forEach(function(s,i){
+            var col= s.score>=80?'green': s.score>=60?'yellow': s.score>=40?'orange': 'gray';
+            html+='<div class="pnode '+col+'" onclick="showStage('+i+')"><div class="pn">'+s.label+'</div><div class="pv">'+(s.score||0).toFixed(0)+'%</div></div>';
+            if(i<stages.length-1)html+='<i class="fas fa-chevron-right text-muted" style="font-size:.6rem"></i>';
+        });
+        document.getElementById('pipelineFlow').innerHTML=html;
+        window._stages=stages;
+    }).catch(function(){})
+}
+function showStage(i){
+    var s=window._stages[i]; if(!s)return;
+    document.getElementById('stageDetail').innerHTML=
+        '<h6 class="fw-bold">'+s.label+'</h6>'+
+        '<div class="hash-line">Status: <strong>'+s.status+'</strong></div>'+
+        '<div class="hash-line">Score: '+s.score.toFixed(1)+'%</div>'+
+        '<div class="hash-line'>Category: '+s.category+'</div>'+
+        (s.hash?'<div class="hash-line">Hash: <code>'+s.hash+'</code></div>':'')+
+        (s.cycles?'<div class="hash-line">Cycles: '+s.cycles+'</div>':'');
+    document.getElementById('evidencePanel').innerHTML='<div class="hash-line">No evidence package for this stage</div>';
+}
+refreshPipe();setInterval(refreshPipe,10000);
+</script></body></html>

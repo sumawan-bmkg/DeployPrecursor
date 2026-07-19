@@ -2,27 +2,53 @@
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+
+# Virtual environments
+.env
+.venv
+venv/
 
 # Logs
 logs/
 *.log
 
-# Runtime
+# Runtime state files
 runtime/
 
 # Backups
 backups/
 
-# Raw data
+# Raw data (too large)
 data/
 
-# Git
-.git/
+# HDF5 output (too large)
+*.h5
+*.hdf5
 
-# Conda
-.env
-.venv
-venv/
+# Model weights / binaries (too large)
+*.pkl
+*.pt
+*.pth
+*.onnx
+*.bin
+*.weights
+*.ckpt
+*.zip
+*.tar.gz
+*.whl
+
+# Release packages (too large, re-buildable)
+release_package/
+shadow_v95/
+v8_operational/
+initial/
+intial/
+
+# Compiled
+*.so
+*.dll
+*.dylib
 
 # Jupyter
 .ipynb_checkpoints/
@@ -30,3 +56,56 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Git
+.git/
+
+# Scratch / temp
+_up.py
+audit_eews/
+RC1_UBUNTU_CERTIFICATION.txt
+RC1_UBUNTU_CERTIFICATION.md
+
+# Node.js (too large, re-buildable)
+node_modules/
+dist/
+build/
+*.map
+
+# --- BINARY / NON-SOURCE EXCLUSIONS ---
+
+# Model weights, checkpoints, embeddings
+laws/runtime/
+laws/edge/
+laws/checkpoints/
+laws/core/
+laws/embeddings/
+laws/figures/
+laws/brain/
+laws/baseline_v1/
+laws/priors/
+laws/reference_npy/
+laws/h5/
+laws/api/
+laws/shared_api/
+laws/validation/
+
+# Node.js (re-buildable)
+pocc/frontend/node_modules/
+pocc/frontend/dist/
+pocc/frontend/.next/
+pocc/frontend/out/
+
+# Deploy artifacts (re-buildable)
+deployv8/
+
+# Python caches
+laws/**/__pycache__/
+pocc/**/__pycache__/
+core/__pycache__/

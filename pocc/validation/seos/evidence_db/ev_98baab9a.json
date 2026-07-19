@@ -1,0 +1,18 @@
+{
+  "id": "98baab9a-c5b2-4e32-a6e6-879ca284a5aa",
+  "ts": "2026-07-15T09:33:52.886129+00:00",
+  "event_type": "CSQ_IMPORT",
+  "component": "prediction",
+  "score": 0.0,
+  "status": "COLLECTED",
+  "severity": "INFO",
+  "manifest_hash": "777e11c73bc548aabaaa2db65ded1f63eed5d33ace01e5238a940534d9cec980",
+  "details": {
+    "ts": "2026-07-15T09:27:22.555003+00:00",
+    "score": 0.0,
+    "scientific_score": 0.0,
+    "runtime_score": 0.0,
+    "unresolved_alerts": 0,
+    "note": "Real metrics (RMSE, F1, etc.) populate during Shadow Mode"
+  }
+}

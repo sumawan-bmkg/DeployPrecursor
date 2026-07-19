@@ -1,0 +1,23 @@
+{
+  "ts": "2026-07-15T09:27:23.701168+00:00",
+  "overall": 6.825852498541965,
+  "components": {
+    "collector": 0,
+    "runtime": 8.258524985419655,
+    "prediction": 0.0,
+    "drift": 60,
+    "dashboard": 0.0
+  },
+  "weights": {
+    "collector": 0.15,
+    "runtime": 0.1,
+    "prediction": 0.15,
+    "infrastructure": 0.1,
+    "dashboard": 0.1,
+    "engineering": 0.1,
+    "release": 0.05,
+    "governance": 0.05,
+    "burnin": 0.1,
+    "drift": 0.1
+  }
+}

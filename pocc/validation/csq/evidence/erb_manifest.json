@@ -1,0 +1,16 @@
+{
+  "erb_uuid": "838d2bf7-a331-47e0-9877-9efb4d0e69b6",
+  "timestamp": "2026-07-15T09:27:23.701854+00:00",
+  "overall_score": 6.825852498541965,
+  "component_scores": {
+    "collector": 0,
+    "runtime": 8.258524985419655,
+    "prediction": 0.0,
+    "drift": 60,
+    "dashboard": 0.0
+  },
+  "drift_status": "DRIFT_DETECTED",
+  "shadow_readiness": false,
+  "production_readiness": false,
+  "manifest_sha256": "eec79da19bb9e4647cdcb7d85e565a33664d5692de5b2ad6015432f5ce4323aa"
+}

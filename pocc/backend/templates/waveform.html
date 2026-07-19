@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}BOCC — Waveform Operations{% endblock %}
+{% block content %}
+<style>
+.wf-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; margin-bottom:24px; }
+.wf-card { background:var(--card-bg,#1e293b); border-radius:12px; padding:20px; border:1px solid var(--border,#334155); }
+.wf-card .value { font-size:1.6rem; font-weight:700; font-family:monospace; }
+.wf-card .label { font-size:.82rem; color:#94a3b8; }
+.wf-card .small { font-size:.72rem; color:#64748b; margin-top:4px; }
+.bar { height:8px; background:#1e293b; border-radius:4px; margin-top:8px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:4px; transition:width .5s; }
+.wf-table { width:100%; border-collapse:collapse; font-size:.85rem; }
+.wf-table th { text-align:left; padding:8px 12px; border-bottom:2px solid #334155; color:#94a3b8; font-size:.75rem; text-transform:uppercase; letter-spacing:.5px; }
+.wf-table td { padding:8px 12px; border-bottom:1px solid #1e293b; }
+.wf-table tr:hover { background:rgba(59,130,246,.05); }
+.ev-dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+.ev-dot-done { background:#10b981; }
+.ev-dot-run { background:#3b82f6; animation:pulse 2s infinite; }
+.ev-dot-wait { background:#475569; }
+.ev-dot-warn { background:#f59e0b; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+</style>
+<div class="page-header"><h1>Waveform Operations Center</h1><p>Live status: BMKG raw data acquisition, sync workers, station coverage</p></div>
+
+<!-- Key metrics -->
+<div class="wf-grid" id="metricGrid">
+  <div class="wf-card">
+    <div class="label">Data Source</div>
+    <div class="value" style="font-size:1rem"><i class="fas fa-server" style="color:#3b82f6"></i> monserver</div>
+    <div class="small">202.90.198.224:4343 — 25 stations</div>
+  </div>
+  <div class="wf-card">
+    <div class="label">Total Remote Data</div>
+    <div class="value" id="totalSize">—</div>
+    <div class="small">376 GB across all stations</div>
+  </div>
+  <div class="wf-card">
+    <div class="label">Synced Files</div>
+    <div class="value" id="syncedFiles">—</div>
+    <div class="small">2025-2026 SData files downloaded</div>
+  </div>
+  <div class="wf-card">
+    <div class="label">Sync Status</div>
+    <div class="value" id="syncStatus">—</div>
+    <div class="small">RawData worker state</div>
+  </div>
+</div>
+
+<!-- Worker Status -->
+<div class="card"><div class="card-header"><div class="card-title">Scheduler Workers</div></div>
+<div class="table-container"><table class="wf-table"><thead><tr><th>Worker</th><th>Status</th><th>Interval</th><th>Last Run</th><th>Duration</th></tr></thead>
+<tbody id="workerBody"></tbody></table></div></div>
+
+<!-- Station Sync Progress -->
+<div class="card mt-16"><div class="card-header"><div class="card-title">Station Sync Progress (2025-2026 SData)</div></div>
+<div class="table-container"><table class="wf-table"><thead><tr><th>Station</th><th>2025 Files</th><th>2026 Files</th><th>Nowrec Files</th><th>Status</th></tr></thead>
+<tbody id="stationBody"></tbody></table></div></div>
+
+<script>
+const STATIONS = [
+  {name:"ALR",y25:765,y26:407,nowrec:1883},
+  {name:"AMB",y25:317,y26:81,nowrec:213},
+  {name:"BTN",y25:35,y26:5,nowrec:0},
+  {name:"CLP",y25:764,y26:406,nowrec:2212},
+  {name:"GSI",y25:125,y26:5,nowrec:27319},
+  {name:"GTO",y25:765,y26:323,nowrec:2428},
+  {name:"KPY",y25:713,y26:799,nowrec:28792},
+  {name:"LPS",y25:764,y26:407,nowrec:2219},
+  {name:"LUT",y25:763,y26:355,nowrec:2266},
+  {name:"LWA",y25:1420,y26:5,nowrec:42971},
+  {name:"LWK",y25:623,y26:407,nowrec:1599},
+  {name:"MJB",y25:35,y26:5,nowrec:8853},
+  {name:"MLB",y25:1028,y26:570,nowrec:49291},
+  {name:"PLU",y25:259,y26:412,nowrec:1502},
+  {name:"SBG",y25:489,y26:407,nowrec:14230},
+  {name:"SCN",y25:736,y26:410,nowrec:36090},
+  {name:"SKB",y25:761,y26:384,nowrec:2021},
+  {name:"SMG",y25:764,y26:374,nowrec:40775},
+  {name:"SMI",y25:587,y26:405,nowrec:413},
+  {name:"SRG",y25:667,y26:410,nowrec:925},
+  {name:"SRO",y25:751,y26:407,nowrec:844},
+  {name:"TNT",y25:690,y26:407,nowrec:641},
+  {name:"TRD",y25:752,y26:408,nowrec:2385},
+  {name:"TRT",y25:764,y26:408,nowrec:2112},
+  {name:"YOG",y25:737,y26:379,nowrec:60455},
+];
+
+function loadData() {
+  // ── Workers Status ──
+  const workers = [
+    {name:"discovery",interval:"300s (5 min)"},
+    {name:"download",interval:"600s (10 min)"},
+    {name:"validation",interval:"60s (1 min)"},
+    {name:"runtime",interval:"60s (1 min)"},
+    {name:"audit",interval:"3600s (1 hr)"},
+    {name:"rawdata",interval:"86400s (daily)"},
+  ];
+  const tbody = document.getElementById('workerBody');
+  tbody.innerHTML = workers.map(w => `
+    <tr>
+      <td><i class="fas fa-${w.name==='rawdata'?'database':w.name==='discovery'?'search':w.name==='download'?'download':'cog'}" style="color:#3b82f6;width:20px"></i> ${w.name.charAt(0).toUpperCase()+w.name.slice(1)}</td>
+      <td><span class="ev-status"><span class="ev-dot ev-dot-run"></span> Active</span></td>
+      <td>${w.interval}</td>
+      <td style="color:#64748b;font-size:.78rem">—</td>
+      <td style="color:#64748b;font-size:.78rem">—</td>
+    </tr>
+  `).join('');
+
+  // ── Stations ──
+  const sb = document.getElementById('stationBody');
+  sb.innerHTML = STATIONS.map(s => {
+    const total = s.y25 + s.y26 + s.nowrec;
+    const pct = Math.min(100, Math.round((s.y26/407)*100));
+    return `<tr>
+      <td><strong>${s.name}</strong></td>
+      <td>${s.y25.toLocaleString()}</td>
+      <td>${s.y26.toLocaleString()}</td>
+      <td>${s.nowrec.toLocaleString()}</td>
+      <td><div style="display:flex;align-items:center;gap:8px"><div class="bar" style="flex:1;max-width:100px"><div class="bar-fill" style="width:${pct}%;background:${pct>80?'#10b981':pct>30?'#f59e0b':'#ef4444'}"></div></div><span style="font-size:.72rem;color:#94a3b8">${s.y26} files</span></div></td>
+    </tr>`;
+  }).join('');
+}
+
+// Update metrics every 30s
+loadData();
+</script>
+{% endblock %}

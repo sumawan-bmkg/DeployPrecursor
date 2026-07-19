@@ -1,0 +1,46 @@
+# PIMES Master Evidence Manifest
+
+**UUID:** manifest-20260716-001
+**Baseline:** v2.0.0-rc2-freeze
+**Generated:** 2026-07-16
+
+```json
+{
+  "manifest_id": "manifest-20260716-001",
+  "baseline": "v2.0.0-rc2-freeze",
+  "created": "2026-07-16T06:30:00Z",
+  "artifacts": [
+    {"id":"EV001","name":"OSC Hourly Snapshots","location":"posc/osc/data/hourly/","status":"ACTIVE"},
+    {"id":"EV002","name":"CEPSL Baseline Lock","location":"posc/osc/data/cepsl_status.json","status":"ACTIVE"},
+    {"id":"EV003","name":"CEPSL Archive Hashes","location":"posc/osc/data/cepsl_archive_*.json","status":"ACTIVE (39)"},
+    {"id":"EV004","name":"SEOS Evidence Storage","location":"pocc/validation/seos/evidence_db/","status":"10 files"},
+    {"id":"EV005-014","name":"OSRV Qualification Reports (10)","location":"pocc/validation/osrv/reports/","status":"GENERATED"},
+    {"id":"EV015","name":"PSEP Dual Execution","location":"pocc/validation/psep/dual_execution/","status":"QUALIFIED"},
+    {"id":"EV016","name":"PSEP Delta Reports","location":"pocc/validation/psep/reports/","status":"COMPLETED"},
+    {"id":"EV017","name":"CSQ Scientific Qualification","location":"pocc/validation/csq/","status":"QUALIFIED"},
+    {"id":"EV018","name":"SOQ Scientific Qualification","location":"pocc/validation/soq/","status":"QUALIFIED"},
+    {"id":"EV019","name":"SOAP Accreditation","location":"pocc/validation/soap/","status":"QUALIFIED"},
+    {"id":"EV020","name":"RDMC Station Signatures (28)","location":"laws/runtime/validation/rdmc/artifacts/","status":"FROZEN"},
+    {"id":"EV021","name":"Golden Dataset Tensors (20)","location":"laws/runtime/validation/golden_dataset/","status":"FROZEN"},
+    {"id":"EV022","name":"ERB Score","location":"laws/runtime/validation/reports/ERB_SCORE.csv","status":"COMPLETED"},
+    {"id":"EV023","name":"Production Acceptance Score","location":"laws/runtime/validation/reports/PRODUCTION_ACCEPTANCE_SCORE.csv","status":"COMPLETED"},
+    {"id":"EV024","name":"Scientific Reproducibility Score","location":"laws/runtime/validation/reports/SCIENTIFIC_REPRODUCIBILITY_SCORE.csv","status":"COMPLETED"},
+    {"id":"EV025","name":"WFDP Data Readiness Audit","location":"pocc/RC2_TRANSITION_PACKAGE/Evidence/wfdp_search.py","status":"COMPLETED"},
+    {"id":"EV026","name":"LFCP LEM Format Characterization","location":"pocc/RC2_TRANSITION_PACKAGE/Evidence/lfcpphase1.py","status":"COMPLETED"},
+    {"id":"EV027","name":"FOAC Final Acceptance","location":"RC2_TRANSITION_PACKAGE/Certificates/EXECUTIVE_READINESS_CERTIFICATE.md","status":"APPROVED"},
+    {"id":"EV028","name":"Production Freeze Manifest","location":"manifests/PRODUCTION_FREEZE_20260716.json","status":"FROZEN"},
+    {"id":"EV029","name":"RC2 Transition Package","location":"RC2_TRANSITION_PACKAGE/","status":"COMPLETE (9 docs)"},
+    {"id":"EV030","name":"Final Risk Register","location":"RC2_TRANSITION_PACKAGE/Risk/FINAL_RISK_REGISTER.md","status":"18 risks"},
+    {"id":"EV031","name":"LEM Binary Format Spec","location":"PIMES_SCIENTIFIC_DATA_BOOK/11_LFCP/","status":"DOCUMENTED"},
+    {"id":"EV032","name":"Cosmic Features Dataset","location":"data/cosmic_features_v3.csv","status":"REFERENCE"},
+    {"id":"EV033","name":"Merge 2026 Earthquake Catalog","location":"initial/merge2026.csv","status":"1356 events"},
+    {"id":"EV034","name":"Prior Models (21 stations)","location":"laws/priors/prior_*.pt","status":"FROZEN"},
+    {"id":"EV035","name":"Reproducibility Book","location":"REPRODUCIBILITY_BOOK/REPRODUCIBILITY_BOOK.md","status":"COMPLETED"},
+    {"id":"EV036","name":"Evaluation Protocol","location":"BLIND_TEST_PACKAGE/Evaluation_Protocol/EVALUATION_PROTOCOL.md","status":"READY"},
+    {"id":"EV037","name":"Operator Handbook","location":"RC2_TRANSITION_PACKAGE/Runbooks/OPERATOR_HANDBOOK.md","status":"READY"},
+    {"id":"EV038","name":"Blind Test Runbook","location":"RC2_TRANSITION_PACKAGE/Runbooks/BLIND_TEST_RUNBOOK.md","status":"READY"},
+    {"id":"EV039","name":"BMKG Data Package Spec","location":"RC2_TRANSITION_PACKAGE/BMKG/BMKG_DATA_PACKAGE_SPECIFICATION.md","status":"READY"},
+    {"id":"EV040","name":"Executive Readiness Certificate","location":"RC2_TRANSITION_PACKAGE/Certificates/EXECUTIVE_READINESS_CERTIFICATE.md","status":"ISSUED"}
+  ]
+}
+```

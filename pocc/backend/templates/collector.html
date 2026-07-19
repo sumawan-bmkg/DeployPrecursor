@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}BOCC — Collector Command Center{% endblock %}
+{% block content %}
+<style>
+.section-title { font-size:.72rem; text-transform:uppercase; letter-spacing:.5px; color:#64748b; margin-bottom:8px; }
+.metric-card { background:#1e293b; border-radius:8px; padding:12px; text-align:center; border:1px solid #334155; }
+.metric-card .value { font-size:1.3rem; font-weight:700; color:#3b82f6; }
+.metric-card .label { font-size:.7rem; color:#64748b; text-transform:uppercase; }
+.worker-card { background:#1e293b; border-radius:8px; padding:12px; border-left:3px solid #3b82f6; margin-bottom:8px; }
+.log-box { background:#0f172a; color:#10b981; font-family:'Courier New',monospace; font-size:.75rem; padding:8px; border-radius:6px; max-height:200px; overflow-y:auto; }
+</style>
+<div class="page-header"><h1>Collector Command Center</h1><p>BMKG collector status</p></div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3"><div class="metric-card"><div class="label">Files Total</div><div class="value" id="totalFiles">—</div></div></div>
+  <div class="col-md-3"><div class="metric-card"><div class="label">Success</div><div class="value good" id="successFiles">—</div></div></div>
+  <div class="col-md-3"><div class="metric-card"><div class="label">Failed</div><div class="value bad" id="failedFiles">—</div></div></div>
+  <div class="col-md-3"><div class="metric-card"><div class="label">Pending</div><div class="value warn" id="pendingFiles">—</div></div></div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card"><div class="card-header"><div class="card-title">Collector Workers</div></div>
+    <div id="workerList"></div></div>
+  </div>
+  <div class="col-md-6">
+    <div class="card"><div class="card-header"><div class="card-title">Real-time Log</div></div>
+    <div class="log-box" id="logBox">Waiting for collector data...</div></div>
+  </div>
+</div>
+
+<script>
+async function loadCollector() {
+  let hm = {};
+  try { hm = await fetch('/api/health-model').then(r=>r.json()); } catch(e) {}
+  const collector = (hm.components||{}).collector || {};
+  document.getElementById('totalFiles').textContent = collector.files_total || collector.total_files || '—';
+  document.getElementById('successFiles').textContent = collector.success||'—';
+  document.getElementById('failedFiles').textContent = collector.failed||'—';
+  document.getElementById('pendingFiles').textContent = collector.pending||'—';
+
+  const workers = collector.workers || [
+    {name:'PDAC Worker',status:'RUNNING',files:collector.files_total||0,last_seen:'now'},
+    {name:'RDMC Worker',status:'STANDBY',files:0,last_seen:'—'}
+  ];
+
+  document.getElementById('workerList').innerHTML = workers.map(w => `
+    <div class="worker-card">
+      <div class="d-flex justify-content-between">
+        <span><strong>${w.name||'?'}</strong></span>
+        <span class="badge ${w.status==='RUNNING'?'bg-success':w.status==='STANDBY'?'bg-warning text-dark':'bg-secondary'}">${w.status||'?'}</span>
+      </div>
+      <div class="mt-1 small text-secondary">Files: ${w.files||0} — Last seen: ${w.last_seen||'?'}</div>
+    </div>
+  `).join('');
+
+  const logLines = [
+    `[${new Date().toISOString()}] Collector manifest loaded`,
+    `[${new Date().toISOString()}] Queue status: success=${collector.success||'?'} failed=${collector.failed||'?'}`,
+    `[${new Date().toISOString()}] Collector score: ${(collector.score||0).toFixed(1)}%`,
+    `[${new Date().toISOString()}] Pipeline status: ${(hm.components||{}).runtime?.status||'?'}`,
+  ];
+  document.getElementById('logBox').innerHTML = logLines.join('<br>');
+}
+loadCollector();
+setInterval(loadCollector,30000);
+</script>
+{% endblock %}

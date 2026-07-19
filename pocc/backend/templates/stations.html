@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+.stations-iframe { width: 100%; height: calc(100vh - 120px); border: none; border-radius: 12px; background: transparent; }
+.stations-container { padding: 0; margin: 0; }
+</style>
+<div class="stations-container">
+<iframe class="stations-iframe" src="http://202.90.198.224:8484/sopg/web/index.php?r=anomali%2Fmap" allowfullscreen></iframe>
+</div>
+{% endblock %}

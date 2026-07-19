@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header"><h1>Release Center</h1><p>Release pipeline status, gate checklist, and evidence review</p></div>
+<div class="row row-2">
+    <div class="card">
+        <div class="card-header"><div class="card-title">Release Pipeline</div></div>
+        <div class="release-timeline">
+            <div class="release-item pass"><strong>RC1</strong> — <span class="badge-pass header-badge">PASS</span><div class="text-muted" style="font-size:0.75rem;margin-top:4px">Framework Acceptance · Burn-in · ERB 95%</div></div>
+            <div class="release-item active"><strong>RC2 Candidate</strong> — <span class="badge-info header-badge">IN PROGRESS</span><div class="text-muted" style="font-size:0.75rem;margin-top:4px">PSEP Phase 1 complete · Single station wired</div></div>
+            <div class="release-item"><strong>RC2</strong> — <span class="badge-fail header-badge">BLOCKED</span><div class="text-muted" style="font-size:0.75rem;margin-top:4px">Need: 5-station cert, full BMKG, shadow mode</div></div>
+            <div class="release-item"><strong>Production</strong> — <span class="badge-fail header-badge">BLOCKED</span><div class="text-muted" style="font-size:0.75rem;margin-top:4px">Need: RC2 + operational approval</div></div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header"><div class="card-title">RC2 Gate Checklist</div></div>
+        <div style="padding:8px 0">
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-color)"><span class="status-dot status-ok"></span>Legacy Pipeline Full Wiring</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-color)"><span class="status-dot status-ok"></span>RuntimeKernel Full Wiring</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-color)"><span class="status-dot status-ok"></span>Single Station (ALR) — Reader + Signal + Tensor</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-color)"><span class="status-dot status-warn"></span>Single Station — Inference Integration</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-color)"><span class="status-dot status-off"></span>5-Station Certification (ALR, AMB, CBI, GTO, KPG)</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-color)"><span class="status-dot status-off"></span>Full BMKG Certification</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-color)"><span class="status-dot status-off"></span>Shadow Mode (14 days)</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0"><span class="status-dot status-off"></span>Evidence Review Board</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

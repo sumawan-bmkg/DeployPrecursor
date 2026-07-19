@@ -1,0 +1,41 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{% block title %}BOCC — BMKG Operational Control Center{% endblock %}</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="/static/css/bocc.css" rel="stylesheet"></head><body>
+<nav class="navbar navbar-dark bocc-topbar fixed-top px-3"><div class="container-fluid">
+<div class="d-flex align-items-center gap-3">
+<img src="/static/img/logo_bmkg.svg" height="28" alt="BMKG">
+<span class="navbar-brand mb-0 fs-5 fw-bold">BOCC</span>
+<span class="badge bg-light text-dark fs-7">{{version}}</span></div>
+<div class="d-flex align-items-center gap-3">
+<span id="liveTime" class="text-light small"></span>
+<span id="overallHealth" class="badge bg-success fs-7 px-3">OPERATIONAL</span></div></div></nav>
+<div class="bocc-sidebar"><div class="sidebar-menu">
+<a href="/" class="sidebar-item{% if active_page=='overview'%} active{%endif%}"><i class="fas fa-rocket"></i><span>Overview</span></a>
+<a href="/collector" class="sidebar-item{% if active_page=='collector'%} active{%endif%}"><i class="fas fa-download"></i><span>Collector</span></a>
+<a href="/runtime" class="sidebar-item{% if active_page=='runtime'%} active{%endif%}"><i class="fas fa-microchip"></i><span>Runtime</span></a>
+<a href="/scientific" class="sidebar-item{% if active_page=='scientific'%} active{%endif%}"><i class="fas fa-flask"></i><span>Scientific</span></a>
+<a href="/burnin" class="sidebar-item{% if active_page=='burnin'%} active{%endif%}"><i class="fas fa-fire"></i><span>Burn-in</span></a>
+<a href="/psep" class="sidebar-item{% if active_page=='psep'%} active{%endif%}"><i class="fas fa-balance-scale"></i><span>PSEP</span></a>
+<a href="/release" class="sidebar-item{% if active_page=='release'%} active{%endif%}"><i class="fas fa-tags"></i><span>Release</span></a>
+<hr class="sidebar-divider">
+<a href="/executive" class="sidebar-item{% if active_page=='executive'%} active{%endif%}"><i class="fas fa-chart-pie"></i><span>Executive</span></a>
+<a href="/governance" class="sidebar-item{% if active_page=='governance'%} active{%endif%}"><i class="fas fa-shield-alt"></i><span>Governance</span></a>
+<a href="/reports" class="sidebar-item{% if active_page=='reports'%} active{%endif%}"><i class="fas fa-file-alt"></i><span>Reports</span></a>
+<a href="/deployment" class="sidebar-item{% if active_page=='deployment'%} active{%endif%}"><i class="fas fa-rocket"></i><span>Deployments</span></a>
+<a href="/mission" class="sidebar-item{% if active_page=='mission'%} active{%endif%}"><i class="fas fa-flag-checkered"></i><span>Mission</span></a>
+<a href="/evidence" class="sidebar-item{% if active_page=='evidence'%} active{%endif%}"><i class="fas fa-clipboard-list"></i><span>Evidence</span></a>
+<a href="/data-readiness" class="sidebar-item{% if active_page=='data-readiness'%} active{%endif%}"><i class="fas fa-clipboard-check"></i><span>Data Readiness</span></a>
+<a href="/waveform" class="sidebar-item{% if active_page=='waveform'%} active{%endif%}"><i class="fas fa-wave-square"></i><span>Waveform</span></a>
+<a href="/stations" class="sidebar-item{% if active_page=='stations'%} active{%endif%}"><i class="fas fa-satellite-dish"></i><span>Stations</span></a>
+<a href="/system" class="sidebar-item{% if active_page=='system'%} active{%endif%}"><i class="fas fa-cogs"></i><span>System</span></a>
+</div></div>
+<div class="bocc-main">{% block content %}{% endblock %}</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+setInterval(function(){var n=new Date;document.getElementById('liveTime').textContent=n.toLocaleString('id-ID',{timeZone:'Asia/Makassar',hour12:false})},1000);
+setTimeout(function(){fetch('/api/health').then(r=>r.json()).then(d=>{var h=document.getElementById('overallHealth');h.textContent=d.status==='OK'?'OPERATIONAL':'DEGRADED';h.className='badge px-3 '+(d.status==='OK'?'bg-success':'bg-warning text-dark')}).catch(()=>{document.getElementById('overallHealth').textContent='OFFLINE'})},2000);
+</script>{% block scripts %}{% endblock %}</body></html>

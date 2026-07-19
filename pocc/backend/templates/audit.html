@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}BOCC — Audit Trail{% endblock %}
+{% block content %}
+<style>
+.audit-entry { padding:12px 16px; border-bottom:1px solid var(--border,#334155); display:flex; align-items:center; gap:16px; }
+.audit-entry:last-child { border-bottom:none; }
+.audit-sev { padding:3px 10px; border-radius:4px; font-size:.72rem; font-weight:600; min-width:70px; text-align:center; }
+.sev-INFO { background:#1e293b; color:#94a3b8; }
+.sev-WARNING { background:#78350f; color:#fbbf24; }
+.sev-ERROR { background:#450a0a; color:#fca5a5; }
+.audit-score { font-family:monospace; font-size:1.1rem; font-weight:700; min-width:60px; }
+.audit-msg { flex:1; font-size:.85rem; }
+.audit-ts { font-family:monospace; font-size:.72rem; color:#64748b; min-width:160px; }
+</style>
+<div class="page-header"><h1>Audit Trail</h1><p>Append-only evidence ledger — last 100 events</p></div>
+
+<div class="card"><div class="card-header"><div class="card-title">Audit Log</div><span id="auditCount" class="badge bg-info">0</span></div>
+<div id="auditList"></div></div>
+
+<div class="card mt-16"><div class="card-header"><div class="card-title">Audit Statistics</div></div>
+<div class="table-container"><table id="auditStats">
+<thead><tr><th>Metric</th><th>Value</th></tr></thead>
+<tbody></tbody></table></div></div>
+
+<script>
+async function loadAudit() {
+  let log=[], stats={};
+  try { const r = await fetch('/api/control/audit?limit=100').then(r=>r.json()); log=r.trail||[]; } catch(e) {}
+  try { stats = await fetch('/api/audit/stats').then(r=>r.json()); } catch(e) {}
+
+  document.getElementById('auditCount').textContent = log.length;
+
+  document.getElementById('auditList').innerHTML = log.map(e=>`
+    <div class="audit-entry">
+      <span class="audit-sev sev-${e.severity||'INFO'}">${e.severity||'INFO'}</span>
+      <span class="audit-score ${(e.score||0)>=80?'good':(e.score||0)>=50?'warn':'bad'}">${e.score!==undefined?e.score.toFixed(0)+'%':'—'}</span>
+      <span class="audit-msg">${e.event||e.command||e.message||'—'}</span>
+      <span class="audit-ts">${(e.ts||e.timestamp||'').slice(0,19)}</span>
+    </div>
+  `).join('') || '<div class="p-3 text-muted">No audit entries yet</div>';
+
+  document.querySelector('#auditStats tbody').innerHTML = `
+    <tr><td>Total Entries</td><td>${log.length}</td></tr>
+    <tr><td>Audit Source</td><td>Governance Engine</td></tr>
+    <tr><td>Storage</td><td>Append-only (no UPDATE/DELETE)</td></tr>
+    <tr><td>Ledger Type</td><td>SQLite (SEOS) + JSONL (CSQ) + JSON (CEPSL)</td></tr>
+  `;
+}
+loadAudit();
+setInterval(loadAudit,30000);
+</script>
+{% endblock %}

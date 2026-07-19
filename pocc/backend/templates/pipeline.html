@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+    <h1>Live Pipeline</h1>
+    <p>Real-time stage status, latency, and artifact count for Legacy and RuntimeKernel</p>
+</div>
+
+<div class="pipeline-flow" style="justify-content:center; margin-bottom:24px;">
+    <div class="pipeline-node node-pass"><div class="node-label">Collector</div><div class="node-status text-green">SFTP OK</div></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node node-pass"><div class="node-label">Reader</div><div class="node-status text-green">0.09s</div></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node node-pass"><div class="node-label">Validation</div><div class="node-status text-green">0.01s</div></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node node-pass"><div class="node-label">Signal</div><div class="node-status text-green">0.03s</div></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node node-pass"><div class="node-label">Tensor</div><div class="node-status text-green">1.9s</div></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node node-pass"><div class="node-label">Inference</div><div class="node-status text-green">0.43s</div></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node node-active"><div class="node-label">Fusion</div><div class="node-status text-accent">ACTIVE</div></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node node-active"><div class="node-label">Alert</div><div class="node-status text-accent">ACTIVE</div></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node"><div class="node-label">Archive</div><div class="node-status text-muted">—</div></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-node"><div class="node-label">Database</div><div class="node-status text-muted">—</div></div>
+</div>
+
+<div class="row row-2">
+    <div class="card">
+        <div class="card-header"><div class="card-title">Stage Latency (seconds)</div></div>
+        <div class="chart-container" id="chart-stage-latency"></div>
+    </div>
+    <div class="card">
+        <div class="card-header"><div class="card-title">Artifact Distribution</div></div>
+        <div class="chart-container" id="chart-artifact-dist"></div>
+    </div>
+</div>
+
+<div class="card mt-16">
+    <div class="card-header"><div class="card-title">Stage Details</div></div>
+    <div class="table-container">
+        <table id="pipeline-table">
+            <thead><tr><th>Stage</th><th>Status</th><th>Latency</th><th>Artifacts</th><th>Hash</th><th>UUID</th></tr></thead>
+            <tbody>
+                <tr><td>Reader</td><td><span class="status-dot status-ok"></span>OK</td><td>0.09s</td><td>1</td><td style="font-family:monospace;font-size:0.7rem">a7f3...</td><td style="font-family:monospace;font-size:0.7rem">9caa...</td></tr>
+                <tr><td>Signal (PC3)</td><td><span class="status-dot status-ok"></span>OK</td><td>0.03s</td><td>6</td><td style="font-family:monospace;font-size:0.7rem">e4b1...</td><td style="font-family:monospace;font-size:0.7rem">b2d8...</td></tr>
+                <tr><td>Tensor</td><td><span class="status-dot status-ok"></span>OK</td><td>1.90s</td><td>1</td><td style="font-family:monospace;font-size:0.7rem">c9a2...</td><td style="font-family:monospace;font-size:0.7rem">f3e7...</td></tr>
+                <tr><td>Inference</td><td><span class="status-dot status-ok"></span>OK</td><td>0.43s</td><td>1</td><td style="font-family:monospace;font-size:0.7rem">d1f8...</td><td style="font-family:monospace;font-size:0.7rem">a4c6...</td></tr>
+                <tr><td>Fusion</td><td><span class="status-dot status-ok"></span>ACTIVE</td><td>—</td><td>0</td><td>—</td><td>—</td></tr>
+                <tr><td>Alert</td><td><span class="status-dot status-ok"></span>ACTIVE</td><td>—</td><td>0</td><td>—</td><td>—</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    initChart('chart-stage-latency', {
+        tooltip: { trigger: 'axis' },
+        xAxis: { type: 'category', data: ['Reader','Validation','Signal','Tensor','Inference','Fusion','Alert'] },
+        yAxis: { type: 'value', name: 'sec' },
+        series: [{ type: 'bar', data: [0.09,0.01,0.03,1.9,0.43,0.01,0.01],
+            itemStyle: { color: '#3b8eff', borderRadius: [4,4,0,0] } }],
+        grid: { left: 50, right: 20, top: 20, bottom: 30 }
+    });
+    initChart('chart-artifact-dist', {
+        tooltip: { trigger: 'item' },
+        series: [{ type: 'pie', radius: ['40%', '70%'],
+            data: [
+                { value: 1, name: 'Reader', itemStyle: { color: '#3b8eff' } },
+                { value: 6, name: 'Signal', itemStyle: { color: '#10b981' } },
+                { value: 1, name: 'Tensor', itemStyle: { color: '#f59e0b' } },
+                { value: 1, name: 'Inference', itemStyle: { color: '#ef4444' } },
+            ],
+            label: { fontSize: 11 }
+        }]
+    });
+});
+</script>
+{% endblock %}

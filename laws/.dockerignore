@@ -1,0 +1,69 @@
+# Production .dockerignore for LAWS Docker image build
+# Reduces final image size by excluding unnecessary files
+
+# Git and version control
+.git
+.gitignore
+.gitattributes
+.github/
+
+# Documentation (optional; can be included if needed)
+*.md
+docs/
+
+# Environment files (provided at runtime)
+.env
+.env.*
+
+# Development and test files
+test_*.py
+scratch_*.py
+debug/
+experiments/
+*.ipynb
+Makefile
+
+# Logs and temporary data (not needed in image)
+logs/
+*.log
+*.csv
+*.tmp
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Large data files
+data/
+*.h5
+*.hdf5
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Development dependencies (use only production requirements.txt)
+venv/
+ENV/
+env/
+.venv

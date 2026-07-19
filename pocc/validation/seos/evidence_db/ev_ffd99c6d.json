@@ -1,0 +1,13 @@
+{
+  "id": "ffd99c6d-514a-4041-8e16-ba3731983684",
+  "ts": "2026-07-15T09:33:33.744171+00:00",
+  "event_type": "PROVENANCE_FAIL",
+  "component": "provenance",
+  "score": 0,
+  "status": "FAILED",
+  "severity": "ERROR",
+  "manifest_hash": "66e054cb5026700fba2e44f7b1a812ca1289e00fc8b60c62204134018396f98d",
+  "details": {
+    "error": "NOT NULL constraint failed: evidence.event_type"
+  }
+}

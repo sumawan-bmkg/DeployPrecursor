@@ -1,0 +1,32 @@
+{
+  "cost_sensitive_readout": {
+    "model": "HistGradientBoostingRegressor (weighted)",
+    "full_mae": 0.053838798255565104,
+    "m6_mae": 0.015320777643119485,
+    "m6_bias": -0.014499733745440436,
+    "phase5_mae": 0.3993,
+    "phase5_m6_mae": 0.5711,
+    "phase5_m6_bias": -0.5631,
+    "cv_mae_mean": 0.4509764352715817,
+    "cv_m6_mae_mean": 0.5839188461488881,
+    "cv_m6_bias_mean": -0.5805279260854104
+  },
+  "quantile": {
+    "coverage_pct": 76.35135135135135,
+    "below_p10_pct": 23.525798525798525,
+    "above_p90_pct": 0.12285012285012285,
+    "mean_width": 0.9723639682255741,
+    "pinball_10": 0.05851734372371207,
+    "pinball_50": 0.16477807315896176,
+    "pinball_90": 0.07503530027239598
+  },
+  "api": {
+    "version": "1.0.0",
+    "quantile_models": [
+      "quantile_p10.joblib",
+      "quantile_p50.joblib",
+      "quantile_p90.joblib"
+    ],
+    "hysteresis": true
+  }
+}

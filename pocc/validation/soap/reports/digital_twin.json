@@ -1,0 +1,51 @@
+{
+  "ts": "2026-07-15T09:37:40.285827+00:00",
+  "nodes": {
+    "collector": {
+      "health": "RUNNING",
+      "score": 27.0
+    },
+    "runtime": {
+      "health": "ACTIVE"
+    },
+    "inference": {
+      "health": "STALE"
+    },
+    "burnin": {
+      "health": "UNAVAILABLE"
+    },
+    "psep": {
+      "health": "ACTIVE"
+    },
+    "dashboard": {
+      "health": "ACTIVE",
+      "score": 0.0
+    },
+    "csq": {
+      "health": "ACTIVE",
+      "score": 55.03231562317745
+    },
+    "soap": {
+      "health": "ACTIVE",
+      "score": 53.58066160662213
+    }
+  },
+  "dependencies": {
+    "collector": [
+      "runtime"
+    ],
+    "runtime": [
+      "inference"
+    ],
+    "inference": [
+      "prediction"
+    ],
+    "prediction": [
+      "dashboard"
+    ],
+    "dashboard": [
+      "csq",
+      "seos"
+    ]
+  }
+}

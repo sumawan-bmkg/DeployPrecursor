@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}BOCC — Analytics{% endblock %}
+{% block content %}
+<style>
+.chart-box { background:var(--card-bg,#1e293b); border-radius:12px; padding:20px; border:1px solid var(--border,#334155); height:300px; margin-bottom:16px; }
+.stat-row { display:flex; gap:16px; flex-wrap:wrap; margin:16px 0; }
+.stat-item { background:var(--card-bg,#1e293b); border-radius:8px; padding:16px 20px; min-width:140px; flex:1; text-align:center; border:1px solid var(--border,#334155); }
+.stat-item .num { font-size:1.6rem; font-weight:700; font-family:monospace; }
+.stat-item .lbl { font-size:.78rem; color:#94a3b8; text-transform:uppercase; }
+</style>
+<div class="page-header"><h1>Analytics</h1><p>Qualification trends & campaign metrics</p></div>
+
+<div class="stat-row" id="statRow"></div>
+
+<div class="row"><div class="col-md-6"><div class="chart-box"><h6>Qualification Trend (30 days)</h6><canvas id="qualChart"></canvas></div></div>
+<div class="col-md-6"><div class="chart-box"><h6>Component Scores</h6><canvas id="compChart"></canvas></div></div></div>
+
+<div class="card mt-16"><div class="card-header"><div class="card-title">Qualification History</div></div>
+<div class="table-container"><table id="histTable">
+<thead><tr><th>Timestamp</th><th>Collector</th><th>Runtime</th><th>Prediction</th><th>Drift</th><th>Overall</th></tr></thead>
+<tbody></tbody></table></div></div>
+
+<script>
+async function loadAnalytics() {
+  let scores = {};
+  try { scores = await fetch('/api/csq/scores').then(r=>r.json()); } catch(e) {}
+  let history = [];
+  try {
+    const r = await fetch('/api/csq/history').then(r=>r.json());
+    history = r.rows || r.data || r || [];
+  } catch(e) {}
+
+  // Stat row
+  const now = new Date();
+  const campaignDay = Math.floor((now - new Date('2026-07-15T09:51:28Z'))/86400000) + 1;
+  document.getElementById('statRow').innerHTML = `
+    <div class="stat-item"><div class="num">${campaignDay}</div><div class="lbl">Campaign Day</div></div>
+    <div class="stat-item"><div class="num">${history.length}</div><div class="lbl">Data Points</div></div>
+    <div class="stat-item"><div class="num">${Object.keys(scores).length}</div><div class="lbl">Scores Tracked</div></div>
+  `;
+
+  // History table
+  const h = Array.isArray(history) ? history : [];
+  document.querySelector('#histTable tbody').innerHTML = h.slice(-50).reverse().map(r=>`
+    <tr><td>${(r.ts||r.timestamp||'').slice(0,19)}</td><td>${(r.collector||r.collector_score||0).toFixed?.(1)??r.collector??0}%</td><td>${(r.runtime||r.runtime_score||0).toFixed?.(1)??r.runtime??0}%</td><td>${(r.prediction||r.prediction_score||0).toFixed?.(1)??r.prediction??0}%</td><td>${(r.drift||r.drift_score||0).toFixed?.(1)??r.drift??0}%</td><td><strong>${(r.overall||r.overall_score||0).toFixed?.(1)??r.overall??0}%</strong></td></tr>
+  `).join('') || '<tr><td colspan="6" class="text-muted">No history yet</td></tr>';
+}
+loadAnalytics();
+setInterval(loadAnalytics,60000);
+</script>
+{% endblock %}

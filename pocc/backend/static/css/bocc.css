@@ -1,0 +1,34 @@
+/* BOCC Theme — BMKG Mission Control */
+:root{--bocc-bg:#0a1628;--bocc-card:#111d36;--bocc-border:#1a2a4a;--bocc-accent:#1a73e8;--bocc-text:#e0e6f0;--bocc-muted:#8899bb;--bocc-green:#00e676;--bocc-red:#ff5252;--bocc-yellow:#ffd740;--bocc-blue:#448aff;--bocc-cyan:#18ffff}
+body{background:var(--bocc-bg);color:var(--bocc-text);font-family:'Inter','Segoe UI',sans-serif;font-size:.85rem;overflow-x:hidden}
+.bocc-topbar{background:linear-gradient(135deg,#0a1628 0%,#112240 100%);border-bottom:1px solid var(--bocc-border);height:48px;z-index:1030}
+.bocc-sidebar{position:fixed;top:48px;left:0;bottom:0;width:180px;background:#0d1b2a;border-right:1px solid var(--bocc-border);padding-top:.5rem;overflow-y:auto;z-index:1020}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:.55rem 1rem;color:var(--bocc-muted);text-decoration:none;font-size:.78rem;border-left:3px solid transparent;transition:.15s}
+.sidebar-item:hover{color:var(--bocc-text);background:rgba(255,255,255,.04)}
+.sidebar-item.active{color:#fff;background:rgba(26,115,232,.15);border-left-color:var(--bocc-accent);font-weight:600}
+.sidebar-item i{width:18px;text-align:center;font-size:.85rem}
+.sidebar-divider{border-color:var(--bocc-border);margin:.3rem .75rem}
+.bocc-main{margin-left:180px;margin-top:48px;padding:1rem;min-height:calc(100vh - 48px)}
+.mission-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.75rem}
+.kpi-card{background:var(--bocc-card);border:1px solid var(--bocc-border);border-radius:8px;padding:1rem;position:relative;overflow:hidden}
+.kpi-card .label{font-size:.65rem;text-transform:uppercase;letter-spacing:.5px;color:var(--bocc-muted)}
+.kpi-card .value{font-size:1.6rem;font-weight:700;margin:.15rem 0;font-family:'Inter',sans-serif}
+.kpi-card .sub{font-size:.7rem;color:var(--bocc-muted)}
+.kpi-card .icon{position:absolute;top:.75rem;right:.75rem;font-size:1.5rem;opacity:.15}
+.kpi-card.green .value{color:var(--bocc-green)}
+.kpi-card.red .value{color:var(--bocc-red)}
+.kpi-card.yellow .value{color:var(--bocc-yellow)}
+.kpi-card.blue .value{color:var(--bocc-blue)}
+.kpi-card.cyan .value{color:var(--bocc-cyan)}
+.stage-chain{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.stage-node{background:var(--bocc-card);border:1px solid var(--bocc-border);border-radius:6px;padding:.4rem .7rem;text-align:center;min-width:70px;cursor:pointer;transition:.15s}
+.stage-node:hover{border-color:var(--bocc-accent);transform:translateY(-2px)}
+.stage-node .s-name{font-size:.6rem;color:var(--bocc-muted);text-transform:uppercase}
+.stage-node .s-status{font-size:.75rem;font-weight:600}
+.section-title{font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--bocc-muted);margin-bottom:.5rem;font-weight:600}
+.log-box{background:#000c1a;color:var(--bocc-green);font-family:'Courier New',monospace;font-size:.68rem;padding:.6rem;border-radius:6px;max-height:150px;overflow-y:auto;border:1px solid var(--bocc-border)}
+.hash-display{font-family:'Courier New',monospace;font-size:.65rem;color:var(--bocc-muted);word-break:break-all}
+.data-table{width:100%;font-size:.75rem}
+.data-table th{color:var(--bocc-muted);font-weight:500;text-transform:uppercase;font-size:.65rem;padding:.35rem .5rem;border-bottom:1px solid var(--bocc-border)}
+.data-table td{padding:.35rem .5rem;border-bottom:1px solid rgba(255,255,255,.04)}
+@media(max-width:768px){.bocc-sidebar{width:50px}.bocc-sidebar span{display:none}.bocc-main{margin-left:50px}}

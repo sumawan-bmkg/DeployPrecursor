@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-07-15T09:10:15.269575+00:00",
+  "total": 37,
+  "online": 0,
+  "offline": 0,
+  "queue": {
+    "WAITING": 0,
+    "RUNNING": 1,
+    "SUCCESS": 164,
+    "FAILED": 0,
+    "RETRY": 443,
+    "SKIPPED": 0,
+    "CORRUPTED": 0
+  },
+  "stations": []
+}

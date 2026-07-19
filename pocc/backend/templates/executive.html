@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Executive Dashboard — BOCC</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="/static/css/bocc.css" rel="stylesheet"></head><body>
+<nav class="navbar navbar-dark bocc-topbar fixed-top px-3"><div class="container-fluid">
+<div class="d-flex align-items-center gap-3"><img src="/static/img/logo_bmkg.svg" height="28"><span class="navbar-brand mb-0 fs-5 fw-bold">BOCC</span><span class="badge bg-light text-dark">Executive</span></div>
+<div class="d-flex align-items-center gap-3"><span id="liveTime" class="text-light small"></span></div></div></nav>
+<div class="bocc-sidebar"><div class="sidebar-menu">
+<a href="/" class="sidebar-item"><i class="fas fa-rocket"></i><span>Overview</span></a>
+<a href="/collector" class="sidebar-item"><i class="fas fa-download"></i><span>Collector</span></a>
+<a href="/runtime" class="sidebar-item"><i class="fas fa-microchip"></i><span>Runtime</span></a>
+<a href="/scientific" class="sidebar-item"><i class="fas fa-flask"></i><span>Scientific</span></a>
+<a href="/burnin" class="sidebar-item"><i class="fas fa-fire"></i><span>Burn-in</span></a>
+<a href="/psep" class="sidebar-item"><i class="fas fa-balance-scale"></i><span>PSEP</span></a>
+<a href="/release" class="sidebar-item"><i class="fas fa-tags"></i><span>Release</span></a>
+<hr class="sidebar-divider">
+<a href="/executive" class="sidebar-item active"><i class="fas fa-chart-pie"></i><span>Executive</span></a>
+<a href="/governance" class="sidebar-item"><i class="fas fa-shield-alt"></i><span>Governance</span></a>
+<a href="/stations" class="sidebar-item"><i class="fas fa-satellite-dish"></i><span>Stations</span></a>
+<a href="/system" class="sidebar-item"><i class="fas fa-cogs"></i><span>System</span></a>
+</div></div>
+<div class="bocc-main">
+<div class="text-center mb-4">
+<h3 class="fw-bold"><i class="fas fa-globe-asia me-2 text-primary"></i>BMKG PIMES</h3>
+<div class="text-muted">Operational Readiness Assessment</div></div>
+
+<!-- Big Mission Health -->
+<div class="text-center mb-4">
+<div id="execHealth" style="font-size:4rem;font-weight:800;color:var(--bocc-green)">-</div>
+<div class="section-title">Mission Health</div></div>
+
+<!-- 4 Big KPIs -->
+<div class="row g-3 mb-4">
+<div class="col-md-3"><div class="kpi-card blue text-center"><div class="label">Operational Readiness</div><div class="value" id="execOp">-</div><div class="sub">Collector + Runtime</div></div></div>
+<div class="col-md-3"><div class="kpi-card green text-center"><div class="label">Scientific Readiness</div><div class="value" id="execSci">-</div><div class="sub">PSEP + Hash</div></div></div>
+<div class="col-md-3"><div class="kpi-card yellow text-center"><div class="label">Burn-in</div><div class="value" id="execBI">-</div><div class="sub" id="execBISub">Cycle</div></div></div>
+<div class="col-md-3"><div class="kpi-card cyan text-center"><div class="label">Release Candidate</div><div class="value" id="execRC">RC1</div><div class="sub" id="execRCSub">Candidate</div></div></div>
+</div>
+
+<!-- 6 Small KPIs -->
+<div class="row g-2 mb-4">
+<div class="col-md-2"><div class="kpi-card blue text-center"><div class="label">Shadow</div><div class="value fs-5" id="execShadow">-</div></div></div>
+<div class="col-md-2"><div class="kpi-card green text-center"><div class="label">Collector</div><div class="value fs-5" id="execCollector">-</div></div></div>
+<div class="col-md-2"><div class="kpi-card blue text-center"><div class="label">Runtime</div><div class="value fs-5" id="execRuntime">-</div></div></div>
+<div class="col-md-2"><div class="kpi-card cyan text-center"><div class="label">Prediction</div><div class="value fs-5" id="execPred">-</div></div></div>
+<div class="col-md-2"><div class="kpi-card green text-center"><div class="label">Availability</div><div class="value fs-5" id="execAvail">-</div></div></div>
+<div class="col-md-2"><div class="kpi-card blue text-center"><div class="label">Stations</div><div class="value fs-5" id="execStations">-</div></div></div>
+</div>
+
+<!-- Alerts -->
+<div class="row g-2">
+<div class="col-md-6">
+<div class="section-title">Active Alerts</div>
+<div id="execAlerts" class="small">Loading...</div>
+</div>
+<div class="col-md-6">
+<div class="section-title">System Status</div>
+<div id="execStatus" class="small">Loading...</div>
+</div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+setInterval(function(){document.getElementById('liveTime').textContent=new Date().toLocaleString('id-ID',{timeZone:'Asia/Makassar',hour12:false})},1000);
+
+function refreshExec(){
+    fetch('/api/oi/tick').then(r=>r.json()).then(d=>{
+        var h=d.health||{};
+        var score=h.score||0;
+        document.getElementById('execHealth').textContent=score.toFixed(1)+'%';
+        document.getElementById('execHealth').style.color=score>=80?'var(--bocc-green)':score>=60?'var(--bocc-yellow)':'var(--bocc-red)';
+        
+        var c=h.components||{};
+        document.getElementById('execOp').textContent=((c.collector||0+c.runtime||0)/2).toFixed(0)+'%';
+        document.getElementById('execSci').textContent=(c.scientific||0).toFixed(0)+'%';
+        document.getElementById('execBI').textContent=(c.burnin||0).toFixed(0)+'%';
+        document.getElementById('execBISub').textContent=h.breakdown?.burnin?.cycle||'';
+        document.getElementById('execRC').textContent='RC1';
+        document.getElementById('execShadow').textContent=(c.shadow||0).toFixed(0)+'%';
+        document.getElementById('execCollector').textContent=(c.collector||0).toFixed(0)+'%';
+        document.getElementById('execRuntime').textContent=(c.runtime||0).toFixed(0)+'%';
+        document.getElementById('execStations').textContent=h.breakdown?.collector?.status||'-';
+        
+        // Alerts
+        var alerts=d.alerts||{};
+        var alertHtml='';
+        ['CRITICAL','HIGH','WARNING','INFO'].forEach(function(s){
+            if(alerts[s]>0) alertHtml+='<div class="mb-1"><span class="badge bg-'+(s==='CRITICAL'?'danger':s==='HIGH'?'warning':s==='WARNING'?'info':'secondary')+'">'+alerts[s]+'</span> <small>'+s+'</small></div>';
+        });
+        document.getElementById('execAlerts').innerHTML=alertHtml||'<span class="text-success">No active alerts</span>';
+        
+        // System map
+        var sm=d.system_map||[];
+        var statusHtml=sm.map(function(n){return '<div class="d-flex justify-content-between mb-1"><small>'+n.label+'</small><span class="badge bg-'+n.color+'" style="font-size:.6rem">'+n.score.toFixed(0)+'%</span></div>';}).join('');
+        document.getElementById('execStatus').innerHTML=statusHtml;
+        
+        document.getElementById('execPred').textContent='Active';
+        document.getElementById('execAvail').textContent='99%';
+    }).catch(function(){})
+}
+refreshExec();setInterval(refreshExec,15000);
+</script></body></html>

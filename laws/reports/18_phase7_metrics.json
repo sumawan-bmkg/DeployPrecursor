@@ -1,0 +1,20 @@
+{
+  "conversion": {
+    "source": "v8_supcon_best.pth",
+    "fp32_path": "d:\\multi\\scalogramv3\\laws\\edge\\models\\v8_supcon.onnx",
+    "int8_path": "d:\\multi\\scalogramv3\\laws\\edge\\models\\v8_supcon_int8.onnx",
+    "fp32_size_mb": 1.21,
+    "int8_size_mb": 1.21,
+    "compression_ratio": 1.0
+  },
+  "integrity": {
+    "cosine_similarity": 0.9984540343284607,
+    "mae_128d": 0.0038432730361819267,
+    "target_cosine": 0.95,
+    "passed": true
+  },
+  "priors": {
+    "total_stations": 22,
+    "prior_dim": 360
+  }
+}

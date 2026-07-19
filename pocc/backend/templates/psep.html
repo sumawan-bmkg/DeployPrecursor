@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}BOCC — PSEP Validation{% endblock %}
+{% block content %}
+<style>
+.psep-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; margin-bottom:24px; }
+.psep-card { background:var(--card-bg,#1e293b); border-radius:12px; padding:20px; border:1px solid var(--border,#334155); }
+.psep-card .value { font-size:1.8rem; font-weight:700; font-family:monospace; }
+.psep-card .label { font-size:.82rem; color:#94a3b8; }
+</style>
+<div class="page-header"><h1>PSEP — Prediction Equivalence</h1><p>Scientific equivalence between legacy & current runtime</p></div>
+
+<div class="psep-grid" id="psepGrid"></div>
+
+<div class="card mt-16"><div class="card-header"><div class="card-title">PSEP Evidence</div></div>
+<div class="table-container"><table id="psepTable">
+<thead><tr><th>Run UUID</th><th>Timestamp</th><th>Score</th><th>Status</th></tr></thead>
+<tbody></tbody></table></div></div>
+
+<script>
+async function loadPsep() {
+  let hm={};
+  try { hm = await fetch('/api/health-model').then(r=>r.json()); } catch(e) {}
+  const psep = (hm.components||{}).psep || {};
+
+  document.getElementById('psepGrid').innerHTML = `
+    <div class="psep-card"><div class="label">PSEP Score</div><div class="value ${(psep.score||0)>=80?'good':(psep.score||0)>=50?'warn':'bad'}">${(psep.score||0).toFixed(1)}%</div><div class="label">Equivalence metric</div></div>
+    <div class="psep-card"><div class="label">Status</div><div class="value">${psep.status||'ACTIVE'}</div><div class="label">Dual execution</div></div>
+    <div class="psep-card"><div class="label">Legacy Runs</div><div class="value">—</div><div class="label">Pending comparison</div></div>
+    <div class="psep-card"><div class="label">Runtime Runs</div><div class="value">—</div><div class="label">Pending comparison</div></div>
+  `;
+}
+loadPsep();
+setInterval(loadPsep,30000);
+</script>
+{% endblock %}

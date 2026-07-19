@@ -1,0 +1,28 @@
+# PIMES BLIND TEST REGISTRY
+
+## Schema (Append-Only CSV)
+
+```csv
+Prediction_UUID,Input_UUID,Timestamp,Station,Prediction_Class,Confidence,Magnitude,Azimuth,Model_Version,SHA256,Evidence_UUID,Status
+```
+
+## Prediction Registry Example
+
+| Field | Type | Description |
+|-------|------|-------------|
+| Prediction_UUID | uuid | Unique prediction identifier |
+| Input_UUID | uuid | Input waveform file hash |
+| Timestamp | ISO 8601 UTC | Prediction generation time |
+| Station | string | 3-letter BMKG station code |
+| Prediction_Class | string | normal/unknown/precursor/earthquake/storm |
+| Confidence | float [0,1] | Model confidence |
+| Magnitude | float | Predicted magnitude (if applicable) |
+| Azimuth | float | Predicted azimuth in degrees |
+| Model_Version | string | e.g., "v2.0.0-rc2-freeze" |
+| SHA256 | hex | Prediction file checksum |
+| Evidence_UUID | uuid | Link to SEOS evidence record |
+| Status | string | pending/reviewed/published |
+
+## File Location
+
+`d:\opt\pimes\pocc\BLIND_TEST_LEDGER\prediction_registry.csv`

@@ -1,0 +1,51 @@
+{
+  "version": "v2.0.0-rc2",
+  "timestamp": "2026-07-16T05:43:31.396560",
+  "files": {
+    "main.py": {
+      "hash": "2340b3d4333073bb7efb52dff730f0faf345cca9c858f16cec29cc859397f5c3",
+      "size": 34234,
+      "path": "backend\\main.py"
+    },
+    "deploy.py": {
+      "hash": "a083302fc70b839d8795da6ba49bd6ee1e9fbd707c971b8fa8555758ed49f3cd",
+      "size": 24107,
+      "path": "deploy.py"
+    },
+    "base.html": {
+      "hash": "da0ea23e4e02f9967eb861621aa9da53222b5871bfa74492d33746bf17333b79",
+      "size": 4135,
+      "path": "backend\\templates\\base.html"
+    },
+    "collector.html": {
+      "hash": "16fabc4ee1536b7ca548d3dade784ea7b1d708d29c40cabaea54fbbaad1192d8",
+      "size": 3718,
+      "path": "backend\\templates\\collector.html"
+    },
+    "governance.html": {
+      "hash": "4cb5a51a4792351568f342908f4155ef1511c002dad021f75b3c49cdfda35645",
+      "size": 2972,
+      "path": "backend\\templates\\governance.html"
+    },
+    "reports.html": {
+      "hash": "ef84cc4b2aa7f43fbf41c29bc44b4d67968129e5794a15b8ecb2a9a0799af6d2",
+      "size": 2662,
+      "path": "backend\\templates\\reports.html"
+    },
+    "deployment.html": {
+      "hash": "07562765285526eb33c54b91ccdc9a6350113409073d702e561f8cc8fa0d4b27",
+      "size": 4609,
+      "path": "backend\\templates\\deployment.html"
+    },
+    "data_readiness.html": {
+      "hash": "5a8ae8ca3c07d365e8ea69fb4e4da2253ed5d1a85b8a9df1ddb30a1bc83cc745",
+      "size": 5318,
+      "path": "backend\\templates\\data_readiness.html"
+    },
+    "waveform.html": {
+      "hash": "97421166ad1c65ddd756a3e95e7a704dcce741cb539ef190dd961a24ea0c6ff0",
+      "size": 5538,
+      "path": "backend\\templates\\waveform.html"
+    }
+  }
+}

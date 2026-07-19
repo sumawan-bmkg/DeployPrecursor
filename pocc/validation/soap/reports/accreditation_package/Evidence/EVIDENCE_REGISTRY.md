@@ -1,0 +1,36 @@
+# Evidence Registry
+| Source | Score | Key |
+|--------|-------|-----|
+| HealthModel | 100.0% | hm_governance |
+| Pipeline | 97.4% | pipeline_inference |
+| HealthModel | 90.0% | hm_infrastructure |
+| Pipeline | 85.0% | pipeline_prediction |
+| HealthModel | 80.0% | hm_operational |
+| Pipeline | 80.0% | pipeline_tensor |
+| HealthModel | 75.0% | hm_release |
+| Pipeline | 75.0% | pipeline_release |
+| CSQ | 60.0% | csq_drift |
+| HealthModel | 50.0% | hm_shadow |
+| Pipeline | 50.0% | pipeline_validation |
+| Pipeline | 50.0% | pipeline_evidence |
+| Pipeline | 27.0% | pipeline_collector |
+| HealthModel | 27.0% | hm_collector |
+| CSQ | 8.3% | csq_runtime |
+| CSQ | 6.8% | csq_qualification |
+| CSQ | 0.0% | csq_prediction |
+| CSQ | 0.0% | csq_dashboard |
+| HealthModel | 0.0% | hm_runtime |
+| HealthModel | 0.0% | hm_scientific |
+| HealthModel | 0.0% | hm_burnin |
+| HealthModel | 0.0% | hm_psep |
+| Pipeline | 0.0% | pipeline_reader |
+| Pipeline | 0.0% | pipeline_signal |
+| Pipeline | 0.0% | pipeline_pc3 |
+| Pipeline | 0.0% | pipeline_fusion |
+| Pipeline | 0.0% | pipeline_burnin |
+| Pipeline | 0.0% | pipeline_psep |
+| Pipeline | 0.0% | pipeline_shadow |
+| Pipeline | 0.0% | pipeline_dashboard |
+| API | 0.0% | live_infrastructure |
+| API | 0.0% | live_release_status |
+| API | 0.0% | live_oi_health |

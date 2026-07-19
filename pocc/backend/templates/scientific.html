@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}BOCC — Scientific Ops{% endblock %}
+{% block content %}
+<style>
+.sci-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-bottom:24px; }
+.sci-card { background:var(--card-bg,#1e293b); border-radius:12px; padding:20px; border:1px solid var(--border,#334155); }
+.sci-card .value { font-size:1.8rem; font-weight:700; font-family:monospace; margin:6px 0; }
+.sci-card .label { font-size:.82rem; color:#94a3b8; }
+</style>
+<div class="page-header"><h1>Scientific Ops</h1><p>Scientific qualification & model health</p></div>
+
+<div class="sci-grid" id="sciGrid"></div>
+
+<div class="card mt-16"><div class="card-header"><div class="card-title">Scientific Qualifications</div></div>
+<div class="table-container"><table id="qualTable">
+<thead><tr><th>Qualification</th><th>Score</th><th>Status</th><th>Framework</th></tr></thead>
+<tbody></tbody></table></div></div>
+
+<script>
+async function loadScientific() {
+  let hm={},csq={};
+  try { hm = await fetch('/api/health-model').then(r=>r.json()); } catch(e) {}
+  try { csq = await fetch('/api/csq/scores').then(r=>r.json()); } catch(e) {}
+
+  const comps = hm.components || {};
+  const sci = comps.scientific || {};
+
+  document.getElementById('sciGrid').innerHTML = `
+    <div class="sci-card"><div class="label">Scientific Score</div><div class="value ${(sci.score||0)>=80?'good':(sci.score||0)>=50?'warn':'bad'}">${(sci.score||0).toFixed(1)}%</div><div class="label">Health model</div></div>
+    <div class="sci-card"><div class="label">Burn-in</div><div class="value">${((comps.burnin||{}).score||0).toFixed(1)}%</div><div class="label">Status: ${(comps.burnin||{}).status||'N/A'}</div></div>
+    <div class="sci-card"><div class="label">PSEP</div><div class="value">${((comps.psep||{}).score||0).toFixed(1)}%</div><div class="label">Dual execution: ${(comps.psep||{}).status||'pending'}</div></div>
+    <div class="sci-card"><div class="label">Release</div><div class="value">${((comps.release||{}).score||0).toFixed(1)}%</div><div class="label">Gate: ${(comps.release||{}).status||'RC1_CANDIDATE'}</div></div>
+  `;
+
+  const quals = [
+    {name:'SOQ Quality', score:0, src:'SOQ (pending data)'},
+    {name:'CSQ Collector', score:csq.collector?.score||0, src:'CSQ'},
+    {name:'CSQ Runtime', score:csq.runtime?.score||0, src:'CSQ'},
+    {name:'CSQ Prediction', score:csq.prediction?.score||0, src:'CSQ'},
+    {name:'CSQ Drift', score:csq.drift?.score||0, src:'CSQ'},
+    {name:'OSRV Pipeline', score:0, src:'OSRV'},
+  ];
+
+  document.querySelector('#qualTable tbody').innerHTML = quals.map(q=>`
+    <tr><td>${q.name}</td><td class="${q.score>=80?'good':q.score>=50?'warn':'bad'}">${q.score.toFixed(1)}%</td><td>${q.score>=80?'PASS':q.score>=50?'MONITOR':'PENDING'}</td><td>${q.src}</td></tr>
+  `).join('');
+}
+loadScientific();
+setInterval(loadScientific,30000);
+</script>
+{% endblock %}

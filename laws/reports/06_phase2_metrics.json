@@ -1,0 +1,32 @@
+{
+  "linear_probe": {
+    "task_a_detection": {
+      "auroc": 0.7270049641478213,
+      "balanced_accuracy": 0.621994851994852,
+      "f1_weighted": 0.4257241229251683
+    },
+    "task_b_magnitude": {
+      "auroc_ovr": 0.5783639476868503,
+      "balanced_accuracy": 0.41874906175807763,
+      "f1_weighted": 0.36499341440794975
+    }
+  },
+  "lai": {
+    "threshold_p95": 1.6328031913877277,
+    "detection_recall_pct": 37.45173745173745,
+    "false_alarm_rate_pct": 5.555555555555555,
+    "storm_trigger_rate_pct": 50.750750750750754,
+    "auroc_md": 0.8174,
+    "mahalanobis_compute_ms_per_sample": 0.008354327257941751
+  },
+  "faiss": {
+    "index_type": "IndexFlatIP",
+    "n_vectors": 1628,
+    "k": 20,
+    "mae": 0.4200830380512397,
+    "rmse": 0.5055691754841631,
+    "mean_error_bias": -0.0015630601957916336,
+    "latency_ms_per_query": 0.005644428056346696,
+    "queries_per_second": 177165.86871464897
+  }
+}

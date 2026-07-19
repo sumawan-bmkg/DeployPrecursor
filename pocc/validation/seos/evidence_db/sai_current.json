@@ -1,0 +1,41 @@
+{
+  "sai_uuid": "3dc8345b-bf20-4218-b0af-ad029fe94275",
+  "timestamp": "2026-07-15T09:33:52.907716+00:00",
+  "overall": 56.988778747812944,
+  "components": {
+    "scientific_integrity": {
+      "score": 0.0,
+      "weight": 0.2
+    },
+    "engineering_reliability": {
+      "score": 8.258524985419655,
+      "weight": 0.15
+    },
+    "infrastructure_stability": {
+      "score": 90.0,
+      "weight": 0.1
+    },
+    "evidence_completeness": {
+      "score": 100.0,
+      "weight": 0.15
+    },
+    "governance_compliance": {
+      "score": 100.0,
+      "weight": 0.1
+    },
+    "operational_stability": {
+      "score": 80.0,
+      "weight": 0.15
+    },
+    "drift_health": {
+      "score": 60.0,
+      "weight": 0.1
+    },
+    "release_readiness": {
+      "score": 75.0,
+      "weight": 0.05
+    }
+  },
+  "recommendation": "NOT READY",
+  "manifest_hash": "4314dd68b4bca04958fcb281161eec97017e80c08cb99ffd66f103ff55f81ec3"
+}

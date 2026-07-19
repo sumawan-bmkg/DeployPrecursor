@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}BOCC — Runtime{% endblock %}
+{% block content %}
+<style>
+.rt-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; margin-bottom:24px; }
+.rt-card { background:var(--card-bg,#1e293b); border-radius:12px; padding:20px; border:1px solid var(--border,#334155); }
+.rt-card .value { font-size:1.8rem; font-weight:700; font-family:monospace; }
+.rt-card .label { font-size:.82rem; color:#94a3b8; }
+.stage-row { display:flex; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid var(--border,#334155); }
+.stage-row:last-child { border-bottom:none; }
+.stage-label { min-width:140px; font-weight:500; }
+.stage-bar { flex:1; height:8px; background:#1e293b; border-radius:4px; overflow:hidden; }
+.stage-bar-fill { height:100%; border-radius:4px; transition:width .5s; }
+</style>
+<div class="page-header"><h1>RuntimeKernel</h1><p>Pipeline stage status</p></div>
+
+<div class="rt-grid" id="rtGrid"></div>
+
+<div class="card"><div class="card-header"><div class="card-title">Pipeline Stages</div></div>
+<div id="stageList"></div></div>
+
+<script>
+async function loadRuntime() {
+  let pipeline = {};
+  try { pipeline = await fetch('/api/pipeline/stages').then(r=>r.json()); } catch(e) {}
+  const stages = pipeline.stages || [];
+
+  const healthy = stages.filter(s=>['ACTIVE','RUNNING','COMPLETE'].includes(s.status)).length;
+  const avg = stages.reduce((a,s)=>a+(s.score||0),0)/Math.max(stages.length,1);
+
+  let byCat = {};
+  for (const s of stages) {
+    const cat = s.category || 'other';
+    if (!byCat[cat]) byCat[cat] = [];
+    byCat[cat].push(s);
+  }
+
+  document.getElementById('rtGrid').innerHTML = `
+    <div class="rt-card"><div class="label">Total Stages</div><div class="value">${stages.length}</div><div class="label">Pipeline stages</div></div>
+    <div class="rt-card"><div class="label">Healthy</div><div class="value good">${healthy}</div><div class="label">of ${stages.length}</div></div>
+    <div class="rt-card"><div class="label">Average Score</div><div class="value ${avg>=80?'good':avg>=50?'warn':'bad'}">${avg.toFixed(1)}%</div><div class="label">Pipeline health</div></div>
+  `;
+
+  document.getElementById('stageList').innerHTML = stages.map(s => {
+    const score = s.score||0;
+    const color = score>=80?'#10b981':score>=50?'#f59e0b':'#ef4444';
+    const statusIcon = ['ACTIVE','RUNNING'].includes(s.status) ? '<span class="good">●</span>' :
+                       ['COMPLETE','PASSED'].includes(s.status) ? '<span class="good">✓</span>' :
+                       s.status==='STALE'?'<span class="warn">◐</span>':'<span class="bad">○</span>';
+    return `<div class="stage-row">
+      <span class="stage-label">${statusIcon} ${s.label||s.id||'?'}</span>
+      <div class="stage-bar"><div class="stage-bar-fill" style="width:${Math.min(score,100)}%;background:${color}"></div></div>
+      <span style="min-width:100px;font-family:monospace;font-size:.85rem;font-weight:600;color:${color}">${score.toFixed(1)}%</span>
+      <span style="min-width:90px;font-size:.78rem;color:#94a3b8;text-transform:uppercase">${s.status||'?'}</span>
+      <span style="min-width:80px;font-size:.72rem;color:#64748b;font-family:monospace">${s.category||''}</span>
+    </div>`;
+  }).join('');
+}
+loadRuntime();
+setInterval(loadRuntime,10000);
+</script>
+{% endblock %}

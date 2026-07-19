@@ -1,0 +1,124 @@
+{
+  "id": "ada6303c-9f02-4e68-95e3-2bb9f53eea1e",
+  "ts": "2026-07-15T09:33:52.882227+00:00",
+  "event_type": "CSQ_IMPORT",
+  "component": "runtime",
+  "score": 8.258524985419655,
+  "status": "COLLECTED",
+  "severity": "INFO",
+  "manifest_hash": "dd9f93ca033ca6b344154a0beb40753c430a2676fc17b73fbef08ac474d0fbc7",
+  "details": {
+    "ts": "2026-07-15T09:27:22.353434+00:00",
+    "score": 8.258524985419655,
+    "stages_total": 15,
+    "stages_healthy": 4,
+    "avg_stage_score": 30.969468695323705,
+    "stages": [
+      {
+        "id": "collector",
+        "label": "Collector",
+        "status": "RUNNING",
+        "score": 27.01812191103789,
+        "category": "acquisition"
+      },
+      {
+        "id": "validation",
+        "label": "Validation",
+        "status": "STANDBY",
+        "score": 50.0,
+        "category": "acquisition"
+      },
+      {
+        "id": "reader",
+        "label": "Reader",
+        "status": "INACTIVE",
+        "score": 0.0,
+        "category": "processing"
+      },
+      {
+        "id": "signal",
+        "label": "Signal Processing",
+        "status": "UNKNOWN",
+        "score": 0.0,
+        "category": "processing"
+      },
+      {
+        "id": "pc3",
+        "label": "PC3",
+        "status": "UNKNOWN",
+        "score": 0.0,
+        "category": "processing"
+      },
+      {
+        "id": "tensor",
+        "label": "Tensor",
+        "status": "ACTIVE",
+        "score": 80.0,
+        "category": "computation"
+      },
+      {
+        "id": "inference",
+        "label": "Inference",
+        "status": "STALE",
+        "score": 97.52390851881769,
+        "category": "computation"
+      },
+      {
+        "id": "fusion",
+        "label": "Fusion",
+        "status": "NO_DATA",
+        "score": 0.0,
+        "category": "computation"
+      },
+      {
+        "id": "prediction",
+        "label": "Prediction",
+        "status": "ACTIVE",
+        "score": 85.0,
+        "category": "output"
+      },
+      {
+        "id": "evidence",
+        "label": "Evidence",
+        "status": "EMPTY",
+        "score": 50.0,
+        "category": "output"
+      },
+      {
+        "id": "burnin",
+        "label": "Burn-in",
+        "status": "UNAVAILABLE",
+        "score": 0.0,
+        "category": "validation"
+      },
+      {
+        "id": "psep",
+        "label": "PSEP",
+        "status": "ACTIVE",
+        "score": 0.0,
+        "category": "validation"
+      },
+      {
+        "id": "shadow",
+        "label": "Shadow",
+        "status": "UNKNOWN",
+        "score": 0.0,
+        "category": "validation"
+      },
+      {
+        "id": "release",
+        "label": "Release",
+        "status": "RC1_CANDIDATE",
+        "score": 75.0,
+        "category": "deployment"
+      },
+      {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "status": "UNKNOWN",
+        "score": 0.0,
+        "category": "deployment"
+      }
+    ]
+  }
+}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}BOCC — Evidence Explorer{% endblock %}
+{% block content %}
+<style>
+.ev-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; margin-bottom:24px; }
+.ev-card { background:var(--card-bg,#1e293b); border-radius:12px; padding:20px; border:1px solid var(--border,#334155); }
+.ev-card .count { font-size:2rem; font-weight:700; font-family:monospace; }
+.ev-card .label { font-size:.82rem; color:#94a3b8; }
+.ev-item { padding:10px 14px; border-bottom:1px solid var(--border,#334155); display:flex; justify-content:space-between; align-items:center; }
+.ev-item:last-child { border-bottom:none; }
+.ev-id { font-family:monospace; font-size:.75rem; color:#64748b; }
+.ev-score { font-weight:600; }
+</style>
+<div class="page-header"><h1>Evidence Explorer</h1><p>Live evidence from CSQ, SEOS, OSC, CEPSL</p></div>
+
+<div class="ev-grid" id="evGrid"></div>
+
+<div class="card mt-16"><div class="card-header"><div class="card-title">Evidence Registry</div><span id="evCount" class="badge bg-info">0</span></div>
+<div class="table-container"><table id="evTable">
+<thead><tr><th>Source</th><th>Component</th><th>Score</th><th>Timestamp</th></tr></thead>
+<tbody></tbody></table></div></div>
+
+<script>
+async function loadEvidence() {
+  const sources = ['/api/csq/scores','/api/evidence','/api/cepsl','/api/osc/status'];
+  let all = [];
+
+  for (const src of sources) {
+    try {
+      const d = await fetch(src).then(r=>r.json());
+      all.push({source:src, data:d});
+    } catch(e) {}
+  }
+
+  // Count evidence
+  let entries = [];
+  for (const s of all) {
+    if (s.source === '/api/csq/scores' && s.data) {
+      for (const [k,v] of Object.entries(s.data)) {
+        if (typeof v === 'object' && v.score !== undefined) entries.push({source:'CSQ',component:k,score:v.score,ts:v.ts||v.timestamp||'now'});
+      }
+    }
+    if (s.source === '/api/cepsl' && s.data) {
+      entries.push({source:'CEPSL',component:'campaign_day',score:s.data.campaign_day,ts:s.data.ts});
+      entries.push({source:'CEPSL',component:'baseline_valid',score:s.data.baseline_valid?100:0,ts:s.data.ts});
+    }
+  }
+
+  // Summary grid
+  const total = entries.length;
+  const csqCount = entries.filter(e=>e.source==='CSQ').length;
+  document.getElementById('evGrid').innerHTML = `
+    <div class="ev-card"><div class="label">Total Evidence</div><div class="count">${total}</div><div class="label">All sources</div></div>
+    <div class="ev-card"><div class="label">CSQ Scores</div><div class="count">${csqCount}</div><div class="label">Continuous Qualification</div></div>
+    <div class="ev-card"><div class="label">CEPSL</div><div class="count">${entries.filter(e=>e.source==='CEPSL').length}</div><div class="label">Evidence guardian</div></div>
+    <div class="ev-card"><div class="label">SEOS/OSRV/SOQ</div><div class="count">—</div><div class="label">Integrated</div></div>
+  `;
+  document.getElementById('evCount').textContent = total;
+
+  const sortScore = (a,b) => (b.score||0)-(a.score||0);
+  document.querySelector('#evTable tbody').innerHTML = entries.sort(sortScore).slice(0,50).map(e=>`
+    <tr><td>${e.source}</td><td>${e.component}</td><td class="${(e.score||0)>=80?'good':(e.score||0)>=50?'warn':'bad'}">${e.score!==undefined?e.score+'%':'N/A'}</td><td class="ev-id">${(e.ts||'').slice(0,19)}</td></tr>
+  `).join('');
+}
+loadEvidence();
+setInterval(loadEvidence,60000);
+</script>
+{% endblock %}

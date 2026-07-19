@@ -1,0 +1,158 @@
+{
+  "chain_length": 15,
+  "root_hash": "9b1e48a0b10c197a636e1c6902e4c941b6ab9e08018acd5348f2026ed6c038eb",
+  "tail_hash": "df9e139daee5bf485bc6e146acdd4cc130b9f2c38e25a8611bc5f18734a73c98",
+  "valid": true,
+  "entries": [
+    {
+      "stage": "collector",
+      "content_hash": "ba27bb1e347ef8d2061e3c6b84258eb10bf2804250a0f7b90d2edc5c6d26492c",
+      "chain_hash": "9b1e48a0b10c197a636e1c6902e4c941b6ab9e08018acd5348f2026ed6c038eb",
+      "prev_chain_hash": null,
+      "timestamp": "2026-07-15T09:33:52.877137+00:00",
+      "metadata": {
+        "score": 27.01812191103789
+      }
+    },
+    {
+      "stage": "validation",
+      "content_hash": "eb00d850eac898a07ef93ba4e1eed7c3a7e489879260467ac062f1cb73940095",
+      "chain_hash": "67b61d8882fc9a56bcbf2f0c1ce07e591a359b831af07bf5f6a2adb9447b9204",
+      "prev_chain_hash": "9b1e48a0b10c197a636e1c6902e4c941b6ab9e08018acd5348f2026ed6c038eb",
+      "timestamp": "2026-07-15T09:33:52.877168+00:00",
+      "metadata": {
+        "score": 50
+      }
+    },
+    {
+      "stage": "reader",
+      "content_hash": "039670d6e31377e4dc680b10c51ef1fe3e856aa88a9597b6ef91c2d77d2c5cd4",
+      "chain_hash": "4a77b6568b85d607b24af79b65c8e087fcc1b27a8996add82d184c07cfb8422d",
+      "prev_chain_hash": "67b61d8882fc9a56bcbf2f0c1ce07e591a359b831af07bf5f6a2adb9447b9204",
+      "timestamp": "2026-07-15T09:33:52.877186+00:00",
+      "metadata": {
+        "score": 0
+      }
+    },
+    {
+      "stage": "signal",
+      "content_hash": "62f0aad008b596dc4317751a3f4d4a8e4331922aa4ef0e625f7c1ccdd7e50fd8",
+      "chain_hash": "55e504d2f951bda23adb513ddd2509d2944022fa97ed6dc13857a9a0cf490d35",
+      "prev_chain_hash": "4a77b6568b85d607b24af79b65c8e087fcc1b27a8996add82d184c07cfb8422d",
+      "timestamp": "2026-07-15T09:33:52.877199+00:00",
+      "metadata": {
+        "score": 0
+      }
+    },
+    {
+      "stage": "pc3",
+      "content_hash": "380f561088285d6c50969090568a27245970b51b783f40400d71695e77f1d7a0",
+      "chain_hash": "622621b88fd5c7611a7d1f114b2f57bd07a5a4457f33995c7a9ac2cf98dbf272",
+      "prev_chain_hash": "55e504d2f951bda23adb513ddd2509d2944022fa97ed6dc13857a9a0cf490d35",
+      "timestamp": "2026-07-15T09:33:52.877213+00:00",
+      "metadata": {
+        "score": 0
+      }
+    },
+    {
+      "stage": "tensor",
+      "content_hash": "5072c34703e580db611769fac39ad2e3719ae6e7e00522be4f24b8214f3cbb2d",
+      "chain_hash": "0ac8ba1ea0454fa05cb7608e231125c6949c519f8210f48e836ee7e321393701",
+      "prev_chain_hash": "622621b88fd5c7611a7d1f114b2f57bd07a5a4457f33995c7a9ac2cf98dbf272",
+      "timestamp": "2026-07-15T09:33:52.877225+00:00",
+      "metadata": {
+        "score": 80
+      }
+    },
+    {
+      "stage": "inference",
+      "content_hash": "902903a1852212fccef77a73fb2d780cd82bf6f270f0571e91b54ce506e675fa",
+      "chain_hash": "5fd5017ceb429fb24711f591ec275cdfc602163a01d05f534ef11985265e9a44",
+      "prev_chain_hash": "0ac8ba1ea0454fa05cb7608e231125c6949c519f8210f48e836ee7e321393701",
+      "timestamp": "2026-07-15T09:33:52.877238+00:00",
+      "metadata": {
+        "score": 97.4154538957278
+      }
+    },
+    {
+      "stage": "fusion",
+      "content_hash": "aa9f5aee790b93e459d0c3afa8edad008f265ebf1acbf6527dc507734cb03d44",
+      "chain_hash": "beafb371292ac965ed2f54b2bcd13390dd734b3ef4705f10c63987c21eac6898",
+      "prev_chain_hash": "5fd5017ceb429fb24711f591ec275cdfc602163a01d05f534ef11985265e9a44",
+      "timestamp": "2026-07-15T09:33:52.877258+00:00",
+      "metadata": {
+        "score": 0
+      }
+    },
+    {
+      "stage": "prediction",
+      "content_hash": "9f1bbd9b293f8bcc4fbbbd2ceefef361ca235587415eba6c4a19853629c6553f",
+      "chain_hash": "3b2ba81ac455b0e948a268e57c50dc97c1e770c657dbf7c6ee42a8a87b69520e",
+      "prev_chain_hash": "beafb371292ac965ed2f54b2bcd13390dd734b3ef4705f10c63987c21eac6898",
+      "timestamp": "2026-07-15T09:33:52.877271+00:00",
+      "metadata": {
+        "score": 85
+      }
+    },
+    {
+      "stage": "evidence",
+      "content_hash": "ea296234882b1c044ea5b372718a405eb67ddb8f5efd563ba0feae38998e016d",
+      "chain_hash": "998f57d3ae0d61f336772ea2a3e989f985ee835c0f09197236927f5ea5ba4126",
+      "prev_chain_hash": "3b2ba81ac455b0e948a268e57c50dc97c1e770c657dbf7c6ee42a8a87b69520e",
+      "timestamp": "2026-07-15T09:33:52.877284+00:00",
+      "metadata": {
+        "score": 50
+      }
+    },
+    {
+      "stage": "burnin",
+      "content_hash": "7a6457f4e6b84de27427e248636c8eacc9a24ff44ce2077509196b326335829d",
+      "chain_hash": "8f43ce34ca964dd272608cf1bb556fb40566dec9558a49e96c0d5c6ecfd62fa3",
+      "prev_chain_hash": "998f57d3ae0d61f336772ea2a3e989f985ee835c0f09197236927f5ea5ba4126",
+      "timestamp": "2026-07-15T09:33:52.877296+00:00",
+      "metadata": {
+        "score": 0
+      }
+    },
+    {
+      "stage": "psep",
+      "content_hash": "55addbc87a3285e108d37867f4107a78754f5e85ce266f4327a77b24c649d6cd",
+      "chain_hash": "060c71807142683d065413785c05cabc4cab0b2b592122d8b988bea06deab77f",
+      "prev_chain_hash": "8f43ce34ca964dd272608cf1bb556fb40566dec9558a49e96c0d5c6ecfd62fa3",
+      "timestamp": "2026-07-15T09:33:52.877311+00:00",
+      "metadata": {
+        "score": 0
+      }
+    },
+    {
+      "stage": "shadow",
+      "content_hash": "f9610c968275b05617dccfdf5a2fee83b0440a952d63dfe85ac1c4ff59d2371d",
+      "chain_hash": "238b96d1e08bbec9d859b33c806d7bb99dcfe486310af884896f238029c33b9d",
+      "prev_chain_hash": "060c71807142683d065413785c05cabc4cab0b2b592122d8b988bea06deab77f",
+      "timestamp": "2026-07-15T09:33:52.877323+00:00",
+      "metadata": {
+        "score": 0
+      }
+    },
+    {
+      "stage": "release",
+      "content_hash": "4bb0b1885099de734eb31240a6171f29759aa2d321c96ba556e0bdb77677b888",
+      "chain_hash": "0488972451d832514b4873e67e1d64bafaf2e1b09b23b80fb4574960bd9fc2ae",
+      "prev_chain_hash": "238b96d1e08bbec9d859b33c806d7bb99dcfe486310af884896f238029c33b9d",
+      "timestamp": "2026-07-15T09:33:52.877335+00:00",
+      "metadata": {
+        "score": 75
+      }
+    },
+    {
+      "stage": "dashboard",
+      "content_hash": "99d5c4a34f64c3ff7fe664e5feec3c4cf47e04023b6bf127a286e13d3a3f1e9a",
+      "chain_hash": "df9e139daee5bf485bc6e146acdd4cc130b9f2c38e25a8611bc5f18734a73c98",
+      "prev_chain_hash": "0488972451d832514b4873e67e1d64bafaf2e1b09b23b80fb4574960bd9fc2ae",
+      "timestamp": "2026-07-15T09:33:52.877347+00:00",
+      "metadata": {
+        "score": 0
+      }
+    }
+  ]
+}

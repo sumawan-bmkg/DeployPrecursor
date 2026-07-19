@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}PIMES — Mission Progress{% endblock %}
+{% block content %}
+<style>
+.mp-grid { max-width:720px; margin:0 auto; }
+.mp-item { margin-bottom:20px; }
+.mp-label { display:flex; justify-content:space-between; font-size:.9rem; margin-bottom:4px; }
+.mp-bar { height:20px; background:#1e293b; border-radius:10px; overflow:hidden; position:relative; }
+.mp-fill { height:100%; border-radius:10px; transition:width 1s ease; }
+.mp-pct { position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:.75rem; font-weight:600; }
+.mp-milestones { list-style:none; padding:0; }
+.mp-milestones li { padding:8px 0; border-bottom:1px solid #1e293b; display:flex; align-items:center; gap:10px; }
+.mp-icon { font-size:1.1rem; }
+.mp-done { color:#10b981; }
+.mp-wait { color:#f59e0b; }
+.mp-future { color:#475569; }
+</style>
+<div class="page-header"><h1>Mission Progress</h1><p>Single source of truth — project milestones and scientific campaign status</p></div>
+<div class="mp-grid">
+  <div class="card"><div class="card-header"><div class="card-title">Project Phases</div></div>
+  <div class="p-3">
+    <div class="mp-item"><div class="mp-label"><span>Software Freeze</span><span class="mp-done">100%</span></div>
+      <div class="mp-bar"><div class="mp-fill" style="width:100%;background:#10b981"></div></div></div>
+    <div class="mp-item"><div class="mp-label"><span>Deployment Complete</span><span class="mp-done">100%</span></div>
+      <div class="mp-bar"><div class="mp-fill" style="width:100%;background:#10b981"></div></div></div>
+    <div class="mp-item"><div class="mp-label"><span>Dashboard Complete</span><span class="mp-done">100%</span></div>
+      <div class="mp-bar"><div class="mp-fill" style="width:100%;background:#10b981"></div></div></div>
+    <div class="mp-item"><div class="mp-label"><span>Governance &amp; Evidence Chain</span><span class="mp-done">100%</span></div>
+      <div class="mp-bar"><div class="mp-fill" style="width:100%;background:#10b981"></div></div></div>
+    <div class="mp-item"><div class="mp-label"><span>Documentation Complete</span><span class="mp-done">100%</span></div>
+      <div class="mp-bar"><div class="mp-fill" style="width:100%;background:#10b981"></div></div></div>
+    <div class="mp-item"><div class="mp-label"><span>Operational Campaign</span><span class="mp-wait">Day 1/14</span></div>
+      <div class="mp-bar"><div class="mp-fill" style="width:7%;background:#3b82f6"></div>
+        <span class="mp-pct" style="color:#fff">7%</span></div></div>
+    <div class="mp-item"><div class="mp-label"><span>Waveform Acquisition (BMKG)</span><span class="mp-wait">Waiting</span></div>
+      <div class="mp-bar"><div class="mp-fill" style="width:5%;background:#f59e0b"></div>
+        <span class="mp-pct" style="color:#fff">—</span></div></div>
+    <div class="mp-item"><div class="mp-label"><span>Blind Test Execution</span><span class="mp-future">0%</span></div>
+      <div class="mp-bar"><div class="mp-fill" style="width:0%;background:#475569"></div></div></div>
+    <div class="mp-item"><div class="mp-label"><span>Scientific Evaluation</span><span class="mp-future">0%</span></div>
+      <div class="mp-bar"><div class="mp-fill" style="width:0%;background:#475569"></div></div></div>
+    <div class="mp-item"><div class="mp-label"><span>ERB Review</span><span class="mp-future">0%</span></div>
+      <div class="mp-bar"><div class="mp-fill" style="width:0%;background:#475569"></div></div></div>
+    <div class="mp-item"><div class="mp-label"><span>Paper Submission</span><span class="mp-future">0%</span></div>
+      <div class="mp-bar"><div class="mp-fill" style="width:0%;background:#475569"></div></div></div>
+    <div class="mp-item"><div class="mp-label"><span>RC2 Final Release</span><span class="mp-future">0%</span></div>
+      <div class="mp-bar"><div class="mp-fill" style="width:0%;background:#475569"></div></div></div>
+  </div></div>
+
+  <div class="card mt-16"><div class="card-header"><div class="card-title">Milestone Checklist</div></div>
+  <div class="p-3"><ul class="mp-milestones">
+    <li><span class="mp-icon mp-done">✅</span> Software Frozen — v2.0.0-rc2-freeze</li>
+    <li><span class="mp-icon mp-done">✅</span> Deployment Complete — PDM verified</li>
+    <li><span class="mp-icon mp-done">✅</span> Dashboard Complete — 29 pages</li>
+    <li><span class="mp-icon mp-done">✅</span> Governance &amp; Audit Trail — Active</li>
+    <li><span class="mp-icon mp-done">✅</span> Evidence Chain — OSC + CEPSL + SEOS</li>
+    <li><span class="mp-icon mp-done">✅</span> Documentation — Data Book + RC2 Package</li>
+    <li><span class="mp-icon mp-done">✅</span> Reproducibility — Book + Manifest</li>
+    <li><span class="mp-icon mp-done">✅</span> Blind Test Protocol — Runbook ready</li>
+    <li><span class="mp-icon mp-done">✅</span> Data Request Package — BMKG spec ready</li>
+    <li><span class="mp-icon mp-done">✅</span> LEM Format Characterization — LFCP complete</li>
+    <li><span class="mp-icon mp-done">✅</span> Operational Campaign Started — Day 1</li>
+    <li><span class="mp-icon mp-wait">⏳</span> BMKG Waveform Received</li>
+    <li><span class="mp-icon mp-future">⭕</span> Blind Test Started</li>
+    <li><span class="mp-icon mp-future">⭕</span> Blind Test Finished</li>
+    <li><span class="mp-icon mp-future">⭕</span> ERB Approved</li>
+    <li><span class="mp-icon mp-future">⭕</span> Paper Submitted</li>
+    <li><span class="mp-icon mp-future">⭕</span> Paper Accepted</li>
+    <li><span class="mp-icon mp-future">⭕</span> RC2 Final Release</li>
+  </ul></div></div>
+
+  <div class="card mt-16"><div class="card-header"><div class="card-title">Current Status</div></div>
+  <div class="p-3" style="font-size:.88rem">
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:6px 16px;align-items:center">
+      <span style="color:#94a3b8">Current Phase</span>
+      <span style="font-weight:600;color:#10b981">Operational Scientific Campaign</span>
+      <span style="color:#94a3b8">Current Gate</span>
+      <span style="font-weight:600;color:#f59e0b">Waiting BMKG Waveform</span>
+      <span style="color:#94a3b8">Next Milestone</span>
+      <span style="font-weight:600;color:#3b82f6">blindtest-start (git tag)</span>
+      <span style="color:#94a3b8">Baseline</span>
+      <span style="font-family:monospace;font-size:.82rem">v2.0.0-rc2-freeze</span>
+      <span style="color:#94a3b8">Evidence</span>
+      <span style="color:#10b981">Accumulating (OSC hourly)</span>
+      <span style="color:#94a3b8">Scientific Status</span>
+      <span style="color:#3b82f6">Operational Campaign Active</span>
+    </div>
+  </div></div>
+</div>
+{% endblock %}

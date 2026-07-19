@@ -1,0 +1,15 @@
+{
+  "ts": "2026-07-15T09:27:23.702960+00:00",
+  "overall": 0.0,
+  "shadow_ready": false,
+  "production_ready": false,
+  "components": {
+    "collector": 0,
+    "runtime": 8.258524985419655,
+    "prediction": 0.0,
+    "drift": 60,
+    "dashboard": 0.0
+  },
+  "drift_status": "DRIFT_DETECTED",
+  "recommendation": "NOT READY"
+}

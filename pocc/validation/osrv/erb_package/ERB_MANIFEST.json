@@ -1,0 +1,46 @@
+{
+  "release_uuid": "b206d4b8-9213-46b8-9330-7bbe75dcc330",
+  "timestamp_utc": "2026-07-15T09:10:22.802329+00:00",
+  "framework": "OSRV v1.0",
+  "results": {
+    "stations": {
+      "stations": 37,
+      "online": 0,
+      "failed": 0
+    },
+    "collector": {
+      "success_rate": 0.26973684210526316,
+      "total": 608
+    },
+    "pipeline": {
+      "stages": 15,
+      "healthy": 4
+    },
+    "scientific": {
+      "scientific": 0,
+      "burn_in": 0,
+      "psep": 0
+    },
+    "stability": {
+      "mean": 17.65,
+      "std": 0.0,
+      "points": 4
+    },
+    "performance": {
+      "cpu": 0.2,
+      "ram": 16.3
+    },
+    "infrastructure": {
+      "fastapi_up": true
+    },
+    "failure": {
+      "tested": 3,
+      "total": 6
+    },
+    "dashboard": {
+      "pages": 11,
+      "healthy": 11
+    }
+  },
+  "readiness": "READY FOR SHADOW"
+}

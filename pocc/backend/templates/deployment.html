@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}BOCC — Deployment Center{% endblock %}
+{% block content %}
+<style>
+.dep-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; margin-bottom:24px; }
+.dep-card { background:var(--card-bg,#1e293b); border-radius:12px; padding:20px; border:1px solid var(--border,#334155); }
+.dep-card .value { font-size:1.6rem; font-weight:700; font-family:monospace; }
+.dep-card .label { font-size:.82rem; color:#94a3b8; }
+.tl-item { padding:8px 14px; border-bottom:1px solid var(--border,#334155); display:flex; align-items:center; gap:12px; }
+.tl-item:last-child { border-bottom:none; }
+.tl-time { font-family:monospace; font-size:.72rem; color:#64748b; min-width:70px; }
+.tl-phase { font-weight:500; min-width:120px; font-size:.85rem; }
+.tl-status { font-size:.72rem; text-transform:uppercase; letter-spacing:.5px; }
+.tl-detail { font-size:.78rem; color:#94a3b8; }
+</style>
+<div class="page-header"><h1>Deployment Center</h1><p>Release history, risk, certificates, campaign</p></div>
+
+<div class="dep-grid" id="depGrid"></div>
+
+<div class="row">
+<div class="col-md-6">
+<div class="card"><div class="card-header"><div class="card-title">Release History</div><span id="relCount" class="badge bg-info">0</span></div>
+<div class="table-container"><table><thead><tr><th>Tag</th><th>UUID</th><th>Files</th></tr></thead>
+<tbody id="relTable"></tbody></table></div></div>
+</div>
+<div class="col-md-6">
+<div class="card"><div class="card-header"><div class="card-title">Deployment Timeline</div></div>
+<div id="timelineList"></div></div>
+</div></div>
+
+<div class="card mt-16"><div class="card-header"><div class="card-title">Deployment Metrics</div></div>
+<div class="table-container"><table><thead><tr><th>Metric</th><th>Value</th></tr></thead>
+<tbody id="metricTable"></tbody></table></div></div>
+
+<script>
+async function loadDeployment() {
+  let d={}, m={}, reg=null, certs=[];
+  try { d = await fetch('/api/deployment/history?limit=1').then(r=>r.json()); } catch(e) {}
+  try { m = await fetch('/api/deployment/metrics').then(r=>r.json()); } catch(e) {}
+  try { reg = await fetch('/api/deployment/registry').then(r=>r.json()); } catch(e) {}
+
+  const tl = d.timeline || [];
+
+  document.getElementById('depGrid').innerHTML = `
+    <div class="dep-card"><div class="label">Version</div><div class="value">${d.release_version||'v2.0.0-rc2'}</div><div class="label">${d.ts?d.ts.slice(0,10):''}</div></div>
+    <div class="dep-card"><div class="label">Deploy Count</div><div class="value">${m.total||d.total_deploys||0}</div><div class="label">Success: ${m.success||0}</div></div>
+    <div class="dep-card"><div class="label">Avg Duration</div><div class="value">${(m.avg_duration||d.avg_duration||0).toFixed?.(0)??d.avg_duration??0}s</div><div class="label">Avg Pass: ${(m.avg_pass_rate||d.avg_pass_rate||0).toFixed?.(1)??0}%</div></div>
+    <div class="dep-card"><div class="label">Campaign Day</div><div class="value">${d.campaign_day||'?'}</div><div class="label">Rollback ready</div></div>
+  `;
+
+  // Releases
+  const releases = reg?.releases || [];
+  document.getElementById('relCount').textContent = releases.length;
+  document.getElementById('relTable').innerHTML = releases.slice(-10).reverse().map(r => `
+    <tr><td>${r.tag||'?'}</td><td class="text-muted" style="font-family:monospace;font-size:.75rem">${(r.uuid||'').slice(0,8)}</td><td>${r.version||'?'}</td></tr>
+  `).join('') || '<tr><td colspan="3" class="text-muted">No releases yet</td></tr>';
+
+  // Timeline
+  document.getElementById('timelineList').innerHTML = tl.map(t => `
+    <div class="tl-item">
+      <span class="tl-time">${(t.ts||'').slice(11,19)}</span>
+      <span class="tl-phase">${t.phase||'?'}</span>
+      <span class="tl-status ${t.status==='OK'||t.status==='PASSED'?'good':t.status==='FAIL'?'bad':'warn'}">${t.status||'?'}</span>
+      <span class="tl-detail">${(t.detail||'').slice(0,50)}</span>
+    </div>
+  `).join('') || '<div class="p-3 text-muted">No deployments yet</div>';
+
+  // Metrics
+  document.getElementById('metricTable').innerHTML = `
+    <tr><td>Total Deploys</td><td>${m.total||0}</td></tr>
+    <tr><td>Success Rate</td><td>${m.success||0}/${m.total||0}</td></tr>
+    <tr><td>Avg Duration</td><td>${(m.avg_duration||0).toFixed?.(1)??0}s</td></tr>
+    <tr><td>Avg Self-Test Pass</td><td>${(m.avg_pass_rate||0).toFixed?.(1)??0}%</td></tr>
+    <tr><td>Current Version</td><td>v2.0.0-rc2</td></tr>
+    <tr><td>Total Files Changed</td><td>${m.total_changed||0}</td></tr>
+  `;
+}
+loadDeployment();
+setInterval(loadDeployment,30000);
+</script>
+{% endblock %}

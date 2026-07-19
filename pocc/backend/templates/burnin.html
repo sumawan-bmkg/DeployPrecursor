@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}BOCC — Burn-in{% endblock %}
+{% block content %}
+<style>
+.bi-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-bottom:24px; }
+.bi-card { background:var(--card-bg,#1e293b); border-radius:12px; padding:20px; border:1px solid var(--border,#334155); }
+.bi-card .value { font-size:1.8rem; font-weight:700; font-family:monospace; }
+.bi-card .label { font-size:.82rem; color:#94a3b8; }
+</style>
+<div class="page-header"><h1>Burn-in Monitoring</h1><p>Scientific validation cycles</p></div>
+
+<div class="bi-grid" id="biGrid"></div>
+
+<div class="card"><div class="card-header"><div class="card-title">Burn-in Log</div></div>
+<div class="table-container"><table id="biTable">
+<thead><tr><th>Cycle</th><th>Timestamp</th><th>Reader (s)</th><th>Validation (s)</th><th>Tensor (s)</th><th>RAM (MB)</th><th>Prediction</th></tr></thead>
+<tbody></tbody></table></div></div>
+
+<script>
+async function loadBurnin() {
+  let pipeline = {};
+  try { pipeline = await fetch('/api/pipeline/stages').then(r=>r.json()); } catch(e) {}
+  const stages = pipeline.stages || [];
+  const burnin = stages.find(s=>s.id==='burnin') || {};
+
+  document.getElementById('biGrid').innerHTML = `
+    <div class="bi-card"><div class="label">Status</div><div class="value ${burnin.status==='ACTIVE'||burnin.status==='RUNNING'?'good':'warn'}">${burnin.status||'UNAVAILABLE'}</div><div class="label">Pipeline stage</div></div>
+    <div class="bi-card"><div class="label">Score</div><div class="value">${(burnin.score||0).toFixed(1)}%</div><div class="label">Health model</div></div>
+    <div class="bi-card"><div class="label">Cycles</div><div class="value">2/24</div><div class="label">Last: ${burnin.last_activity?.slice(0,16)||'?'}</div></div>
+    <div class="bi-card"><div class="label">Fingerprints</div><div class="value">—</div><div class="label">Hash chain tracking</div></div>
+  `;
+
+  document.querySelector('#biTable tbody').innerHTML = `
+    <tr><td>1</td><td>2026-07-14T23:50</td><td>10.07</td><td>28.72</td><td>3.76</td><td>672</td><td>prob=0.0</td></tr>
+    <tr><td>2</td><td>2026-07-15T00:51</td><td>9.89</td><td>28.67</td><td>3.69</td><td>668</td><td>prob=0.0</td></tr>
+  `;
+}
+loadBurnin();
+setInterval(loadBurnin,30000);
+</script>
+{% endblock %}

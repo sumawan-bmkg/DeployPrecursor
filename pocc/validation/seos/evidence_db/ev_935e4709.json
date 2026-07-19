@@ -1,0 +1,15 @@
+{
+  "id": "935e4709-6724-4063-aa8f-04722046a8aa",
+  "ts": "2026-07-15T09:33:52.878359+00:00",
+  "event_type": "FINGERPRINT_BUILT",
+  "component": "fingerprint",
+  "score": 100,
+  "status": "SUCCESS",
+  "severity": "INFO",
+  "manifest_hash": "a35e2702d78a49340a13d2272b44d784b1003aa868cbd0a3430c0df3a449514c",
+  "details": {
+    "valid": true,
+    "entries": 15,
+    "broken": []
+  }
+}
