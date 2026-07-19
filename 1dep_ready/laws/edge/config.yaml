@@ -1,0 +1,79 @@
+# ═══════════════════════════════════════════════════════════════════
+# V8 SupCon-TFLite Edge — Configuration
+# Target: NVIDIA Jetson Nano 4GB
+# ═══════════════════════════════════════════════════════════════════
+
+# ── Model Paths ──────────────────────────────────────────────────
+model:
+  tflite_path: "models/v8_supcon_int8.tflite"
+  priors_path: "models/priors.npy"
+  num_threads: 2              # Jetson Nano has 4 ARM cores
+
+# ── CWT Preprocessing ────────────────────────────────────────────
+cwt:
+  wavelet: "cmor1.5-1.0"
+  n_scales: 128
+  n_samples: 1440             # 24h @ 1 sample/min
+  fs: 1.0                     # 1 sample per minute
+  freq_min: 0.0005            # Hz (Pc5 lower bound)
+  freq_max: 0.1               # Hz (Pc3 upper bound)
+  normalize: true             # Z-score per channel
+
+# ── Detection Thresholds ────────────────────────────────────────
+thresholds:
+  detection: 0.50             # P(class=1) > this → EQ detected
+  storm_kp: 4.0               # Kp > this → storm mode (suppress)
+  storm_dst: -30.0            # Dst < this → storm mode (suppress)
+  magnitude_clip: [3.0, 6.5]  # Valid magnitude range
+
+# ── Adaptive Threshold (from F8) ────────────────────────────────
+adaptive:
+  enabled: true
+  quiet_threshold: 0.42       # Low storm index → more sensitive
+  storm_threshold: 0.60       # High storm index → less sensitive
+  storm_index_weights:
+    kp: 0.6
+    dst: 0.4
+
+# ── Decision States (from F8) ───────────────────────────────────
+decision:
+  states:
+    SAFE: { range: [0.0, 0.30] }
+    MONITOR: { range: [0.30, 0.50] }
+    REVIEW: { range: [0.50, 0.70] }
+    ALERT: { range: [0.70, 1.0] }
+  hysteresis:
+    enabled: true
+    cooldown_minutes: 60      # Minimum time between state flips
+
+# ── Station Configuration ───────────────────────────────────────
+stations:
+  - { code: "ALR", lat:  -8.15, lon: 115.09 }
+  - { code: "AMB", lat:  -6.84, lon: 113.76 }
+  - { code: "CLP", lat:  -7.16, lon: 112.74 }
+  - { code: "GTO", lat:   0.53, lon: 123.56 }
+  - { code: "KPY", lat:  -8.63, lon: 115.52 }
+  - { code: "LPS", lat:  -8.45, lon: 115.60 }
+  - { code: "LUT", lat: -10.17, lon: 123.56 }
+  - { code: "LWA", lat:  -8.33, lon: 116.35 }
+  - { code: "LWK", lat:  -2.44, lon: 121.35 }
+  - { code: "MLB", lat:  -2.63, lon: 107.63 }
+  - { code: "PLU", lat:  -6.85, lon: 107.61 }
+  - { code: "ROT", lat:  -1.46, lon: 123.09 }
+  - { code: "SBG", lat:  -1.00, lon: 100.46 }
+  - { code: "SCN", lat: -10.28, lon: 105.24 }
+  - { code: "SKB", lat:  -2.09, lon: 105.11 }
+  - { code: "SMI", lat:  -0.87, lon: 100.64 }
+  - { code: "SRG", lat:  -3.31, lon: 114.59 }
+  - { code: "SRO", lat:  -7.52, lon: 112.72 }
+  - { code: "TNT", lat:  -6.59, lon: 106.77 }
+  - { code: "TRD", lat:  -8.21, lon: 115.52 }
+  - { code: "TRT", lat:  -5.64, lon: 105.76 }
+  - { code: "YOG", lat:  -7.79, lon: 110.37 }
+
+# ── Sampling & I/O ──────────────────────────────────────────────
+runtime:
+  sampling_interval_sec: 60   # 1 sample per minute
+  log_dir: "logs"
+  log_level: "INFO"
+  max_history_hours: 48       # Rolling buffer size

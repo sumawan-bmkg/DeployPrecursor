@@ -1,0 +1,26 @@
+# ST-LAF Deployment Infrastructure
+version: '3.8'
+
+services:
+  st-laf:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: st-laf
+    restart: unless-stopped
+    ports:
+      - "8100:8100"
+    environment:
+      - STLAF_HOST=0.0.0.0
+      - STLAF_PORT=8100
+      - STLAF_LOG_LEVEL=info
+      - STLAF_WINDOW=10
+      - STLAF_HISTORY=48
+    volumes:
+      - ./logs:/app/logs
+      - ../laws:/app/laws  # shared LAWS resources
+
+networks:
+  default:
+    name: laws-network
+    external: true

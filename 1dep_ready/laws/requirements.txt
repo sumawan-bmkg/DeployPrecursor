@@ -1,0 +1,34 @@
+# LAWS Operational — Python Dependencies
+# Install: pip install -r requirements.txt
+
+# Core ML
+torch>=2.0.0
+torchvision>=0.15.0
+
+# API
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+pydantic>=2.0.0
+
+# Data
+numpy>=1.24.0
+h5py>=3.8.0
+
+# Inference utilities
+tqdm>=4.64.0
+
+# Optional: PyG for GNN (if not using standalone SpatialGNNModule)
+# torch-scatter
+# torch-sparse
+# torch-cluster
+# torch-geometric
+
+# Phase 4/5 features
+scipy>=1.10.0
+lightgbm>=4.0.0
+PyWavelets>=1.4.0
+numba>=0.57.0
+
+# Harvester/Client
+requests>=2.31.0
+schedule>=1.2.0

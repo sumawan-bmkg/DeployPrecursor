@@ -1,0 +1,24 @@
+# V8 SupCon-TFLite Edge — Jetson Nano Dependencies
+# Minimal runtime deps — no PyTorch/FastAPI on edge
+# TensorFlow Lite Runtime (NOT full TF)
+tflite-runtime>=2.11.0
+
+# Core
+numpy>=1.21.0
+scipy>=1.7.0
+
+# Signal processing
+PyWavelets>=1.4.0
+
+# Data handling (config, CSV logs)
+pyyaml>=6.0
+
+# Streaming / I2C / serial (for real magnetometer reads)
+# pyserial>=3.5
+# smbus2>=0.4.2
+
+# Monitoring & logging
+psutil>=5.9.0
+
+# Optional: ONNX Runtime as fallback if TFLite conversion fails
+# onnxruntime>=1.15.0
