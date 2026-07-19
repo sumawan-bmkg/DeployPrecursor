@@ -1,0 +1,17 @@
+{
+  "prediction_uuid": "a962fa5611e66afb",
+  "artifact_uuid": "",
+  "station": "YOG",
+  "timestamp": "2026-07-19T05:53:25",
+  "model_name": "MockPredictor",
+  "model_version": "mock-1.0",
+  "backend": "mock",
+  "prediction_hash": "4c7de3181f589460",
+  "input_hash": "",
+  "qc_score": 0.92,
+  "qc_version": "sciqg-1.0",
+  "pipeline_version": "laws-v2",
+  "prediction": 0.836,
+  "uncertainty": 0.1,
+  "latency_ms": 0.01
+}

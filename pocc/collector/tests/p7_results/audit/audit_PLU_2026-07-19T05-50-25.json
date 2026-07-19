@@ -1,0 +1,17 @@
+{
+  "prediction_uuid": "2ce09578f83dbff0",
+  "artifact_uuid": "",
+  "station": "PLU",
+  "timestamp": "2026-07-19T05:50:25",
+  "model_name": "MockPredictor",
+  "model_version": "mock-1.0",
+  "backend": "mock",
+  "prediction_hash": "826a2bffc290d093",
+  "input_hash": "",
+  "qc_score": 0.76,
+  "qc_version": "sciqg-1.0",
+  "pipeline_version": "laws-v2",
+  "prediction": 0.708,
+  "uncertainty": 0.24,
+  "latency_ms": 0.01
+}

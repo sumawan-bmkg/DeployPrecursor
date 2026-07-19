@@ -1,0 +1,17 @@
+{
+  "prediction_uuid": "563b252bbe582d3c",
+  "artifact_uuid": "",
+  "station": "LWK",
+  "timestamp": "2026-07-19T05:53:09",
+  "model_name": "LAWSV2Adapter",
+  "model_version": "laws-v2-adapter-0.1",
+  "backend": "laws-stub",
+  "prediction_hash": "06d43ac9c0230f7f",
+  "input_hash": "",
+  "qc_score": 0.52,
+  "qc_version": "sciqg-1.0",
+  "pipeline_version": "laws-v2",
+  "prediction": 0.0,
+  "uncertainty": 1.0,
+  "latency_ms": 0.0
+}

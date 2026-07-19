@@ -1,0 +1,17 @@
+{
+  "prediction_uuid": "f65b106d305cf273",
+  "artifact_uuid": "",
+  "station": "SBG",
+  "timestamp": "2026-07-19T05:53:10",
+  "model_name": "LAWSV2Adapter",
+  "model_version": "laws-v2-adapter-0.1",
+  "backend": "laws-stub",
+  "prediction_hash": "3383c635750db79c",
+  "input_hash": "",
+  "qc_score": 0.92,
+  "qc_version": "sciqg-1.0",
+  "pipeline_version": "laws-v2",
+  "prediction": 0.0,
+  "uncertainty": 1.0,
+  "latency_ms": 0.0
+}

@@ -1,0 +1,17 @@
+{
+  "prediction_uuid": "d7f9a17cf7656287",
+  "artifact_uuid": "",
+  "station": "MLB",
+  "timestamp": "2026-07-19T05:46:10",
+  "model_name": "Ensemble+MockPredictor+MockPredictor",
+  "model_version": "ensemble-v1-2predictors",
+  "backend": "ensemble",
+  "prediction_hash": "099ba810a8b9622f",
+  "input_hash": "",
+  "qc_score": 0.35,
+  "qc_version": "sciqg-1.0",
+  "pipeline_version": "laws-v2",
+  "prediction": 0.755,
+  "uncertainty": 0.35,
+  "latency_ms": 0.01
+}

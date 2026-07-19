@@ -1,0 +1,61 @@
+qc:
+  version: '2.0'
+  rules:
+    range:
+      enabled: true
+      weight: 0.3
+      priority: CRITICAL
+    continuity:
+      enabled: true
+      weight: 0.2
+      priority: HIGH
+    cross_correlation:
+      enabled: true
+      weight: 0.1
+      priority: MEDIUM
+    missing_sample:
+      enabled: true
+      weight: 0.1
+      priority: HIGH
+    entropy:
+      enabled: true
+      weight: 0.1
+      priority: MEDIUM
+    spectral:
+      enabled: true
+      weight: 0.1
+      priority: MEDIUM
+    psd:
+      enabled: false
+      weight: 0.0
+      priority: DISABLED
+  threshold_adjustments:
+    cross_correlation:
+      min_r: 0.7
+    spectral:
+      min_shannon_entropy: 0.3
+    range:
+      margin: 5000
+    missing_sample:
+      max_nan_fraction: 0.05
+  station_overrides:
+    AMB:
+      status: anomalous
+    MLB:
+      status: corrupted
+    TRT:
+      status: corrupted
+decision_policy:
+  name: calibrated_v1
+  severity_map:
+    EXCELLENT: PROCEED
+    GOOD: PROCEED
+    ACCEPTABLE: PROCEED
+    SUSPICIOUS: QUARANTINE
+    CORRUPTED: QUARANTINE
+  score_thresholds:
+    EXCELLENT: 0.85
+    GOOD: 0.7
+    ACCEPTABLE: 0.5
+    SUSPICIOUS: 0.3
+    CORRUPTED: 0.0

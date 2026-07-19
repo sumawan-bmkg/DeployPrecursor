@@ -1,0 +1,111 @@
+{
+  "total": 18,
+  "passed": 18,
+  "failed": 0,
+  "benchmark": [
+    {
+      "label": "100",
+      "count": 100,
+      "elapsed_s": 0.21,
+      "rate_per_sec": 477.1
+    },
+    {
+      "label": "500",
+      "count": 500,
+      "elapsed_s": 1.054,
+      "rate_per_sec": 474.3
+    }
+  ],
+  "results": [
+    {
+      "category": "Resource",
+      "name": "Quarantine read-only directory",
+      "ok": true
+    },
+    {
+      "category": "Resource",
+      "name": "Large array 1M samples",
+      "ok": true
+    },
+    {
+      "category": "Infrastructure",
+      "name": "Registry loads from corrupt JSON",
+      "ok": true
+    },
+    {
+      "category": "Infrastructure",
+      "name": "Registry recover after file deleted",
+      "ok": true
+    },
+    {
+      "category": "Infrastructure",
+      "name": "Registry loads from empty file",
+      "ok": true
+    },
+    {
+      "category": "Pipeline",
+      "name": "QCOrchestrator handles QC failure gracefully",
+      "ok": true
+    },
+    {
+      "category": "Pipeline",
+      "name": "Empty arrays no crash",
+      "ok": true
+    },
+    {
+      "category": "Pipeline",
+      "name": "All NaN arrays no crash",
+      "ok": true
+    },
+    {
+      "category": "Pipeline",
+      "name": "None arrays no crash",
+      "ok": true
+    },
+    {
+      "category": "Pipeline",
+      "name": "Single sample no crash",
+      "ok": true
+    },
+    {
+      "category": "Pipeline",
+      "name": "No double-quarantine",
+      "ok": true
+    },
+    {
+      "category": "Process",
+      "name": "Idempotent registration",
+      "ok": true
+    },
+    {
+      "category": "Process",
+      "name": "Idempotent transition",
+      "ok": true
+    },
+    {
+      "category": "Process",
+      "name": "Thread safety - 10 concurrent evals",
+      "ok": true
+    },
+    {
+      "category": "Process",
+      "name": "evaluate_only pure no side effects",
+      "ok": true
+    },
+    {
+      "category": "Benchmark",
+      "name": "100 files benchmark",
+      "ok": true
+    },
+    {
+      "category": "Benchmark",
+      "name": "500 files benchmark",
+      "ok": true
+    },
+    {
+      "category": "Soak",
+      "name": "30s soak - 14012 evals at 467.0/sec",
+      "ok": true
+    }
+  ]
+}

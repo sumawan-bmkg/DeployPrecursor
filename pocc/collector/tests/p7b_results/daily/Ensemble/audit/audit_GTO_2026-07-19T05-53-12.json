@@ -1,0 +1,17 @@
+{
+  "prediction_uuid": "fbcaad756be80dea",
+  "artifact_uuid": "",
+  "station": "GTO",
+  "timestamp": "2026-07-19T05:53:12",
+  "model_name": "Ensemble+MockPredictor+MockPredictor",
+  "model_version": "ensemble-v1-2predictors",
+  "backend": "ensemble",
+  "prediction_hash": "f14955d4b91476ab",
+  "input_hash": "",
+  "qc_score": 0.76,
+  "qc_version": "sciqg-1.0",
+  "pipeline_version": "laws-v2",
+  "prediction": 0.708,
+  "uncertainty": 0.24,
+  "latency_ms": 0.0
+}

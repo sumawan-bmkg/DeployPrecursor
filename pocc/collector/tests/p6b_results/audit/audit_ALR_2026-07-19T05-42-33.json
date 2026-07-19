@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-07-19T05:42:33",
+  "station": "ALR",
+  "prediction_hash": "526762c6d92d7ffc",
+  "input_hash": "b71e5938fdbe",
+  "qc_score": 0.8,
+  "model_version": "mock-1.0",
+  "probability": 0.74,
+  "confidence": 0.8,
+  "latency_ms": 0.0
+}

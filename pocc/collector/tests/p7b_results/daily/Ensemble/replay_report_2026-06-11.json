@@ -1,0 +1,47 @@
+{
+  "date": "2026-06-11",
+  "stations_processed": 13,
+  "n_predictions": 13,
+  "metrics": {
+    "n_predictions": 13,
+    "precision": 0.0,
+    "recall": 0.0,
+    "far": 1.0,
+    "miss_rate": 0.0,
+    "brier_score": 0.5537,
+    "tp": 0,
+    "fp": 13,
+    "tn": 0,
+    "fn": 0,
+    "mean_probability": 0.7369,
+    "mean_uncertainty": 0.2246,
+    "mean_latency_ms": 0.0085,
+    "max_latency_ms": 0.02,
+    "coverage": 1.0,
+    "eq_events_detected": 0,
+    "computed_at": "2026-07-19T05:53:33"
+  },
+  "drift": {
+    "timestamp": "2026-07-19T05:53:33",
+    "drift_threshold": 0.2,
+    "any_drift": false,
+    "fields": {
+      "probability": {
+        "drifted": false,
+        "ks_stat": 0.0,
+        "reason": "insufficient_data"
+      },
+      "uncertainty": {
+        "drifted": false,
+        "ks_stat": 0.0,
+        "reason": "insufficient_data"
+      }
+    }
+  },
+  "ground_truth": {
+    "fetched": true,
+    "total_events": 67
+  },
+  "predictor": "Ensemble+MockPredictor+MockPredictor",
+  "completed_at": "2026-07-19T05:53:33"
+}

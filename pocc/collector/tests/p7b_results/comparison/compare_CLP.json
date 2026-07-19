@@ -1,0 +1,39 @@
+{
+  "station": "CLP",
+  "timestamp": "2026-07-19T05:53:37",
+  "results": [
+    {
+      "backend": "Mock",
+      "model_name": "MockPredictor",
+      "model_version": "mock-1.0",
+      "probability": 0.82,
+      "confidence": 0.9,
+      "uncertainty": 0.1,
+      "latency_ms": 0.01,
+      "explanation": "QC passed; low anomaly probability",
+      "prediction_hash": "a601724e888778cb"
+    },
+    {
+      "backend": "LAWS",
+      "model_name": "LAWSV2Adapter",
+      "model_version": "laws-v2-adapter-0.1",
+      "probability": 0.0,
+      "confidence": 0.0,
+      "uncertainty": 1.0,
+      "latency_ms": 0.0,
+      "explanation": "LAWS adapter stub \u2014 no real model loaded",
+      "prediction_hash": "41330cb7adebdbfa"
+    },
+    {
+      "backend": "Ensemble",
+      "model_name": "Ensemble+MockPredictor+MockPredictor",
+      "model_version": "ensemble-v1-2predictors",
+      "probability": 0.82,
+      "confidence": 0.9,
+      "uncertainty": 0.1,
+      "latency_ms": 0.0,
+      "explanation": "Ensemble of 2 predictors",
+      "prediction_hash": "08b062f598a4acea"
+    }
+  ]
+}

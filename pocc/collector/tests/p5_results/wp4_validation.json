@@ -1,0 +1,45 @@
+{
+  "scn_20230101": {
+    "score": 0.636,
+    "severity": "ACCEPTABLE",
+    "passed": true,
+    "failed_rules": [
+      "range",
+      "psd"
+    ]
+  },
+  "synthetic_gap": {
+    "score": 0.636,
+    "severity": "ACCEPTABLE",
+    "failed_rules": [
+      "continuity",
+      "entropy",
+      "psd"
+    ]
+  },
+  "synthetic_spike": {
+    "score": 0.636,
+    "severity": "ACCEPTABLE",
+    "failed_rules": [
+      "cross_correlation",
+      "entropy",
+      "psd"
+    ]
+  },
+  "synthetic_stuck": {
+    "score": 0.909,
+    "severity": "EXCELLENT",
+    "failed_rules": [
+      "psd"
+    ]
+  },
+  "suggested_thresholds": {
+    "continuity": 1.0,
+    "cross_correlation": 1.0,
+    "entropy": 1.0,
+    "missing_sample": 1.0,
+    "psd": 0.003,
+    "range": 1.0,
+    "spectral": 0.3
+  }
+}

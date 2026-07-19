@@ -1,0 +1,17 @@
+{
+  "prediction_uuid": "eece261c1466ce85",
+  "artifact_uuid": "",
+  "station": "SMI",
+  "timestamp": "2026-07-19T05:53:24",
+  "model_name": "MockPredictor",
+  "model_version": "mock-1.0",
+  "backend": "mock",
+  "prediction_hash": "430328db3ddc817c",
+  "input_hash": "",
+  "qc_score": 0.92,
+  "qc_version": "sciqg-1.0",
+  "pipeline_version": "laws-v2",
+  "prediction": 0.836,
+  "uncertainty": 0.1,
+  "latency_ms": 0.01
+}

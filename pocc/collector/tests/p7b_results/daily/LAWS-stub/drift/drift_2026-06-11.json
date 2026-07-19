@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-07-19T05:53:29",
+  "drift_threshold": 0.2,
+  "any_drift": false,
+  "fields": {
+    "probability": {
+      "drifted": false,
+      "ks_stat": 0.0,
+      "reason": "insufficient_data"
+    },
+    "uncertainty": {
+      "drifted": false,
+      "ks_stat": 0.0,
+      "reason": "insufficient_data"
+    }
+  }
+}

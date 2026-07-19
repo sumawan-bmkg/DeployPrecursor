@@ -1,0 +1,17 @@
+{
+  "prediction_uuid": "0262eeea0ad9df28",
+  "artifact_uuid": "",
+  "station": "TNT",
+  "timestamp": "2026-07-19T05:46:10",
+  "model_name": "Ensemble+MockPredictor+MockPredictor",
+  "model_version": "ensemble-v1-2predictors",
+  "backend": "ensemble",
+  "prediction_hash": "be5eea04a47b02f5",
+  "input_hash": "",
+  "qc_score": 0.55,
+  "qc_version": "sciqg-1.0",
+  "pipeline_version": "laws-v2",
+  "prediction": 0.615,
+  "uncertainty": 0.45,
+  "latency_ms": 0.01
+}

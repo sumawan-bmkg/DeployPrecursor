@@ -1,0 +1,138 @@
+[
+  {
+    "station": "ALR",
+    "qc_score": 0.6,
+    "qc_severity": "ACCEPTABLE",
+    "prediction": "NORMAL",
+    "confidence": 0.6,
+    "uncertainty": 0.4
+  },
+  {
+    "station": "AMB",
+    "qc_score": 0.84,
+    "qc_severity": "GOOD",
+    "prediction": "NORMAL",
+    "confidence": 0.84,
+    "uncertainty": 0.16
+  },
+  {
+    "station": "CLP",
+    "qc_score": 0.92,
+    "qc_severity": "EXCELLENT",
+    "prediction": "NORMAL",
+    "confidence": 0.9,
+    "uncertainty": 0.1
+  },
+  {
+    "station": "GTO",
+    "qc_score": 0.76,
+    "qc_severity": "GOOD",
+    "prediction": "NORMAL",
+    "confidence": 0.76,
+    "uncertainty": 0.24
+  },
+  {
+    "station": "LPS",
+    "qc_score": 0.92,
+    "qc_severity": "EXCELLENT",
+    "prediction": "NORMAL",
+    "confidence": 0.9,
+    "uncertainty": 0.1
+  },
+  {
+    "station": "LWK",
+    "qc_score": 0.52,
+    "qc_severity": "SUSPICIOUS",
+    "prediction": "NORMAL",
+    "confidence": 0.52,
+    "uncertainty": 0.48
+  },
+  {
+    "station": "MLB",
+    "qc_score": 0.52,
+    "qc_severity": "SUSPICIOUS",
+    "prediction": "NORMAL",
+    "confidence": 0.52,
+    "uncertainty": 0.48
+  },
+  {
+    "station": "PLU",
+    "qc_score": 0.76,
+    "qc_severity": "GOOD",
+    "prediction": "NORMAL",
+    "confidence": 0.76,
+    "uncertainty": 0.24
+  },
+  {
+    "station": "SBG",
+    "qc_score": 0.92,
+    "qc_severity": "EXCELLENT",
+    "prediction": "NORMAL",
+    "confidence": 0.9,
+    "uncertainty": 0.1
+  },
+  {
+    "station": "SKB",
+    "qc_score": 0.76,
+    "qc_severity": "GOOD",
+    "prediction": "NORMAL",
+    "confidence": 0.76,
+    "uncertainty": 0.24
+  },
+  {
+    "station": "SMI",
+    "qc_score": 0.92,
+    "qc_severity": "EXCELLENT",
+    "prediction": "NORMAL",
+    "confidence": 0.9,
+    "uncertainty": 0.1
+  },
+  {
+    "station": "SRG",
+    "qc_score": 0.76,
+    "qc_severity": "GOOD",
+    "prediction": "NORMAL",
+    "confidence": 0.76,
+    "uncertainty": 0.24
+  },
+  {
+    "station": "SRO",
+    "qc_score": 0.92,
+    "qc_severity": "EXCELLENT",
+    "prediction": "NORMAL",
+    "confidence": 0.9,
+    "uncertainty": 0.1
+  },
+  {
+    "station": "TNT",
+    "qc_score": 0.6,
+    "qc_severity": "ACCEPTABLE",
+    "prediction": "NORMAL",
+    "confidence": 0.6,
+    "uncertainty": 0.4
+  },
+  {
+    "station": "TRD",
+    "qc_score": 0.52,
+    "qc_severity": "SUSPICIOUS",
+    "prediction": "NORMAL",
+    "confidence": 0.52,
+    "uncertainty": 0.48
+  },
+  {
+    "station": "TRT",
+    "qc_score": 0.68,
+    "qc_severity": "ACCEPTABLE",
+    "prediction": "NORMAL",
+    "confidence": 0.68,
+    "uncertainty": 0.32
+  },
+  {
+    "station": "YOG",
+    "qc_score": 0.92,
+    "qc_severity": "EXCELLENT",
+    "prediction": "NORMAL",
+    "confidence": 0.9,
+    "uncertainty": 0.1
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "prediction_uuid": "ffd9ee63dea30cfe",
+  "artifact_uuid": "",
+  "station": "GTO",
+  "timestamp": "2026-07-19T05:53:23",
+  "model_name": "MockPredictor",
+  "model_version": "mock-1.0",
+  "backend": "mock",
+  "prediction_hash": "ac36dd2a32c29359",
+  "input_hash": "",
+  "qc_score": 0.76,
+  "qc_version": "sciqg-1.0",
+  "pipeline_version": "laws-v2",
+  "prediction": 0.708,
+  "uncertainty": 0.24,
+  "latency_ms": 0.01
+}

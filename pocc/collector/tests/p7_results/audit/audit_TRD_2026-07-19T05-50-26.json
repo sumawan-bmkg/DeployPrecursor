@@ -1,0 +1,17 @@
+{
+  "prediction_uuid": "60c451d4aab0557d",
+  "artifact_uuid": "",
+  "station": "TRD",
+  "timestamp": "2026-07-19T05:50:26",
+  "model_name": "MockPredictor",
+  "model_version": "mock-1.0",
+  "backend": "mock",
+  "prediction_hash": "531bad68972f638f",
+  "input_hash": "",
+  "qc_score": 0.52,
+  "qc_version": "sciqg-1.0",
+  "pipeline_version": "laws-v2",
+  "prediction": 0.516,
+  "uncertainty": 0.48,
+  "latency_ms": 0.01
+}

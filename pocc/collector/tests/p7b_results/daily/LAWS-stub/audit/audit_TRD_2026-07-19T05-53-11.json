@@ -1,0 +1,17 @@
+{
+  "prediction_uuid": "de623efd351fae5a",
+  "artifact_uuid": "",
+  "station": "TRD",
+  "timestamp": "2026-07-19T05:53:11",
+  "model_name": "LAWSV2Adapter",
+  "model_version": "laws-v2-adapter-0.1",
+  "backend": "laws-stub",
+  "prediction_hash": "a6b51c4a345c0606",
+  "input_hash": "",
+  "qc_score": 0.52,
+  "qc_version": "sciqg-1.0",
+  "pipeline_version": "laws-v2",
+  "prediction": 0.0,
+  "uncertainty": 1.0,
+  "latency_ms": 0.0
+}

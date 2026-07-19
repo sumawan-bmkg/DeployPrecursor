@@ -1,0 +1,17 @@
+{
+  "prediction_uuid": "4f87b9d57d40c2f8",
+  "artifact_uuid": "",
+  "station": "SRG",
+  "timestamp": "2026-07-19T05:53:14",
+  "model_name": "Ensemble+MockPredictor+MockPredictor",
+  "model_version": "ensemble-v1-2predictors",
+  "backend": "ensemble",
+  "prediction_hash": "b64b4ebb6be060f0",
+  "input_hash": "",
+  "qc_score": 0.76,
+  "qc_version": "sciqg-1.0",
+  "pipeline_version": "laws-v2",
+  "prediction": 0.708,
+  "uncertainty": 0.24,
+  "latency_ms": 0.01
+}
