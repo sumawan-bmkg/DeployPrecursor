@@ -17,6 +17,12 @@ from backend.playbook import playbook
 from backend.infrastructure import infra_collector, pipeline_collector, collector_analytics, evidence_explorer, release_status
 import uvicorn
 
+# ── Ensure collector package is importable ────────────────
+import sys as _sys
+_POCC_ROOT = str(Path("/opt/pimes/pocc"))
+if _POCC_ROOT not in _sys.path:
+    _sys.path.insert(0, _POCC_ROOT)
+
 # ── Paths ────────────────────────────────────────────────
 POCC_DIR = Path("/opt/pimes/pocc")
 BACKEND_DIR = POCC_DIR / "backend"
@@ -897,32 +903,107 @@ async def api_control_evidence(cmd_uuid: str):
 async def api_control_audit(limit: int = 100):
     return {"trail": gov.list_commands(limit), "total": len(gov.commands)}
 
-# ── WS Real-time ─────────────────────────────────────────
-@app.websocket("/ws")
-async def websocket_endpoint(ws: WebSocket):
-    await manager.connect(ws)
+# ── LAWS V2 Operational Pipeline (PostgreSQL-backed) ──────
+PCAC_DIR = Path("/opt/pimes/laws/runtime/validation/pdac")
+
+@app.get("/api/events")
+async def api_events(state: str = "", limit: int = 50):
+    """List precursor events from PostgreSQL."""
     try:
-        while True:
-            await ws.receive_text()  # keep alive
-    except WebSocketDisconnect:
-        manager.disconnect(ws)
+        from collector.db import list_events
+        events = list_events(limit=limit, state=state)
+        return {"events": events, "total": len(events)}
+    except Exception as e:
+        return {"events": [], "total": 0, "error": str(e)[:200]}
 
-async def broadcast_loop():
-    """Periodic broadcast to all WS clients."""
-    while True:
-        await asyncio.sleep(5)
-        data = {
-            "dashboard": await api_dashboard(),
-            "pipeline": await api_pipeline(),
-            "system": await api_system(),
-            "time": datetime.now(timezone.utc).isoformat()
-        }
-        await manager.broadcast(data)
+@app.get("/api/events/{event_id}")
+async def api_event_detail(event_id: str):
+    """Get event detail from PostgreSQL."""
+    try:
+        from collector.db import get_event
+        event = get_event(event_id)
+        if not event:
+            return {"error": "not found"}
+        return event
+    except Exception as e:
+        return {"error": str(e)[:200]}
 
-@app.on_event("startup")
-async def startup():
-    asyncio.create_task(broadcast_loop())
+@app.get("/api/warnings")
+async def api_warnings(state: str = "", limit: int = 50):
+    """List warnings from PostgreSQL."""
+    try:
+        from collector.db import list_warnings
+        warnings = list_warnings(limit=limit, state=state)
+        return {"warnings": warnings, "total": len(warnings)}
+    except Exception as e:
+        return {"warnings": [], "total": 0, "error": str(e)[:200]}
 
-# ── Run ──────────────────────────────────────────────────
-if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8500, reload=True)
+@app.get("/api/warnings/{warning_id}")
+async def api_warning_detail(warning_id: str):
+    """Get warning detail from PostgreSQL."""
+    try:
+        from collector.db import get_warning
+        w = get_warning(warning_id)
+        if not w:
+            return {"error": "not found"}
+        return w
+    except Exception as e:
+        return {"error": str(e)[:200]}
+
+@app.get("/api/decisions")
+async def api_decisions(station: str = "", limit: int = 50):
+    """List decisions from PostgreSQL."""
+    try:
+        from collector.db import list_decisions
+        decisions = list_decisions(limit=limit, station=station)
+        return {"decisions": decisions, "total": len(decisions)}
+    except Exception as e:
+        return {"decisions": [], "total": 0, "error": str(e)[:200]}
+
+@app.get("/api/predictor")
+async def api_predictor():
+    """Get predictor status."""
+    try:
+        from collector.laws_predictor import LAWSRealPredictor
+        p = LAWSRealPredictor()
+        return p.get_model_info()
+    except Exception as e:
+        return {"error": str(e)[:200], "status": "unavailable"}
+
+@app.get("/api/fused-events")
+async def api_fused_events(limit: int = 50):
+    """List fused events from PostgreSQL."""
+    try:
+        from collector.db import list_fused_events
+        events = list_fused_events(limit=limit)
+        return {"events": events, "total": len(events)}
+    except Exception as e:
+        return {"events": [], "total": 0, "error": str(e)[:200]}
+
+@app.get("/api/pipeline-runs")
+async def api_pipeline_runs(worker: str = "", limit: int = 50):
+    """List pipeline runs from PostgreSQL."""
+    try:
+        from collector.db import list_pipeline_runs
+        runs = list_pipeline_runs(limit=limit, worker=worker)
+        return {"runs": runs, "total": len(runs)}
+    except Exception as e:
+        return {"runs": [], "total": 0, "error": str(e)[:200]}
+
+@app.get("/api/db-health")
+async def api_db_health():
+    """Check PostgreSQL connection health."""
+    try:
+        from collector.db import check_health
+        return check_health()
+    except Exception as e:
+        return {"status": "ERROR", "error": str(e)[:200]}
+
+# ── Pages for Events / Warnings ────────────────────────────
+@app.get("/events", response_class=HTMLResponse)
+async def page_events(request: Request):
+    return templates.TemplateResponse(request, "events.html", {"version": VERSION, "active_page": "events"})
+
+@app.get("/warnings", response_class=HTMLResponse)
+async def page_warnings(request: Request):
+    return templates.TemplateResponse(request, "warnings.html", {"version": VERSION, "active_page": "warnings"})

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Warnings — BOCC{% endblock %}
+{% block content %}
+<style>
+.wrn-table { font-size:.85rem; }
+.wrn-table td { vertical-align:middle; }
+</style>
+<h4 class="fw-bold mb-3"><i class="fas fa-bell text-danger me-2"></i>Warnings</h4>
+<div class="table-responsive">
+<table class="table table-dark table-sm wrn-table">
+<thead>
+<tr><th>Warning ID</th><th>Event ID</th><th>State</th><th>Level</th><th>Prob</th><th>Stations</th><th>Issued</th></tr>
+</thead>
+<tbody id="wrnBody">
+<tr><td colspan="7" class="text-muted">Loading...</td></tr>
+</tbody>
+</table>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function refreshWarnings(){
+    var r=await fetch('/api/warnings').then(r=>r.json());
+    var t=document.getElementById('wrnBody');
+    if(!r.warnings||!r.warnings.length){t.innerHTML='<tr><td colspan="7" class="text-muted">No warnings</td></tr>';return}
+    t.innerHTML=r.warnings.map(function(w){
+        var cls=w.level==='CRITICAL'?'danger':w.level==='WARNING'?'warning':w.level==='WATCH'?'info':'secondary';
+        var scls=w.state==='NEW'||w.state==='ACTIVE'?'success':w.state==='EXPIRED'?'secondary':'light';
+        return '<tr><td><a href="/api/warnings/'+w.warning_id+'" target="_blank" class="text-light">'+w.warning_id+'</a></td><td><small>'+w.event_id+'</small></td><td><span class="badge bg-'+scls+'">'+w.state+'</span></td><td><span class="badge bg-'+cls+'">'+w.level+'</span></td><td>'+(w.probability*100).toFixed(1)+'%</td><td>'+(w.stations||[]).join(', ')+'</td><td><small>'+(w.issued_at||'').slice(0,19)+'</small></td></tr>';
+    }).join('');
+}
+refreshWarnings();setInterval(refreshWarnings,10000);
+</script>
+{% endblock %}

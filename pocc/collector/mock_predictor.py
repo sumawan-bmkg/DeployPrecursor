@@ -1,6 +1,6 @@
 """MockPredictor implementing PredictorInterface (P6B+P6C)."""
 import os, json, time, hashlib
-from predictor_base import PredictorInterface, Prediction
+from collector.predictor_base import PredictorInterface, Prediction
 
 
 class MockPredictor(PredictorInterface):

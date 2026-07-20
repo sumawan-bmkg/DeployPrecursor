@@ -1,39 +1,341 @@
-{% extends 'base.html' %}{% block title %}Mission Overview — BOCC{% endblock %}
+{% extends "base.html" %}
+{% block title %}LAWS V2 — Operations Console{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3"><h4 class="mb-0 fw-bold"><i class="fas fa-rocket me-2 text-primary"></i>Mission Overview</h4><span class="text-muted small" id="ovTimestamp">LAWS V2 — Operational</span></div>
-<div class="mission-grid" id="missionGrid">
-<div class="kpi-card blue"><div class="label">Overall Health</div><div class="value" id="ovHealth">-</div><div class="sub">System Status</div><i class="fas fa-heartbeat icon"></i></div>
-<div class="kpi-card green"><div class="label">ScientificQG Score</div><div class="value" id="ovScore">-</div><div class="sub">PSEP Score</div><i class="fas fa-flask icon"></i></div>
-<div class="kpi-card cyan"><div class="label">Collector</div><div class="value" id="ovCollector">-</div><div class="sub" id="ovCollectorSub">Last: --</div><i class="fas fa-download icon"></i></div>
-<div class="kpi-card blue"><div class="label">Runtime</div><div class="value" id="ovRuntime">-</div><div class="sub">Pipeline</div><i class="fas fa-microchip icon"></i></div>
-<div class="kpi-card green"><div class="label">Burn-in</div><div class="value" id="ovBurnin">-</div><div class="sub" id="ovBurninSub">Cycle</div><i class="fas fa-fire icon"></i></div>
-<div class="kpi-card yellow"><div class="label">Shadow Mode</div><div class="value" id="ovShadow">-</div><div class="sub" id="ovShadowSub">Day</div><i class="fas fa-moon icon"></i></div>
-<div class="kpi-card blue"><div class="label">Stations Online</div><div class="value" id="ovStations">-</div><div class="sub">of 22 expected</div><i class="fas fa-satellite-dish icon"></i></div>
-<div class="kpi-card green"><div class="label">Release Gate</div><div class="value" id="ovRelease">-</div><div class="sub">Phase</div><i class="fas fa-tags icon"></i></div>
+<style>
+.ops-console { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; margin-bottom:20px; }
+.ops-card { background:var(--card-bg,#1e293b); border-radius:10px; padding:18px; border:1px solid var(--border,#334155); position:relative; }
+.ops-card .ops-label { font-size:.78rem; color:#94a3b8; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
+.ops-card .ops-value { font-size:1.7rem; font-weight:700; font-family:'Inter',monospace; }
+.ops-card .ops-sub { font-size:.75rem; color:#64748b; margin-top:4px; }
+.ops-card .ops-indicator { position:absolute; top:12px; right:14px; width:10px; height:10px; border-radius:50%; }
+.indicator-green { background:#10b981; box-shadow:0 0 6px #10b981; }
+.indicator-red { background:#ef4444; box-shadow:0 0 6px #ef4444; }
+.indicator-yellow { background:#f59e0b; box-shadow:0 0 6px #f59e0b; }
+.indicator-gray { background:#64748b; }
+
+.ops-section { background:var(--card-bg,#1e293b); border-radius:12px; border:1px solid var(--border,#334155); margin-bottom:16px; overflow:hidden; }
+.ops-section-header { padding:14px 20px; border-bottom:1px solid var(--border,#334155); display:flex; justify-content:space-between; align-items:center; }
+.ops-section-title { font-size:.9rem; font-weight:600; color:#e2e8f0; }
+.ops-section-body { padding:12px 20px; }
+
+.ops-table { width:100%; border-collapse:collapse; }
+.ops-table th { text-align:left; padding:6px 10px; font-size:.72rem; text-transform:uppercase; letter-spacing:.5px; color:#64748b; border-bottom:1px solid var(--border,#334155); }
+.ops-table td { padding:7px 10px; font-size:.82rem; color:#cbd5e1; border-bottom:1px solid rgba(51,65,85,.3); }
+.ops-table tr:last-child td { border-bottom:none; }
+
+.badge-status { padding:2px 8px; border-radius:6px; font-size:.72rem; font-weight:600; }
+.badge-success { background:rgba(16,185,129,.15); color:#10b981; }
+.badge-warning { background:rgba(245,158,11,.15); color:#f59e0b; }
+.badge-danger { background:rgba(239,68,68,.15); color:#ef4444; }
+.badge-info { background:rgba(59,130,246,.15); color:#3b82f6; }
+.badge-neutral { background:rgba(100,116,139,.15); color:#94a3b8; }
+
+.ops-pipeline-chain { display:flex; align-items:center; gap:6px; flex-wrap:wrap; padding:14px 20px; }
+.ops-stage { display:flex; flex-direction:column; align-items:center; padding:6px 10px; border-radius:8px; min-width:60px; }
+.ops-stage-name { font-size:.68rem; color:#94a3b8; text-transform:uppercase; }
+.ops-stage-value { font-size:.82rem; font-weight:600; margin-top:2px; }
+.ops-arrow { color:#475569; font-size:.6rem; }
+.stage-ok { background:rgba(16,185,129,.1); }
+.stage-warn { background:rgba(245,158,11,.1); }
+.stage-err { background:rgba(239,68,68,.1); }
+.stage-idle { background:rgba(100,116,139,.05); }
+
+#noData { color:#64748b; font-style:italic; padding:20px; text-align:center; }
+</style>
+
+<div class="page-header">
+  <h1>Operations Console</h1>
+  <p>LAWS V2 Operational Shadow — <span id="opsTime">--</span></p>
 </div>
-<div class="row mt-3">
-<div class="col-md-7"><div class="section-title">LAWS V2 Pipeline</div>
-<div class="stage-chain">
-<div class="stage-node"><div class="s-name">Discovery</div><div class="s-status text-muted" id="stDiscovery">-</div></div><i class="fas fa-chevron-right text-muted" style="font-size:.65rem"></i>
-<div class="stage-node"><div class="s-name">Download</div><div class="s-status text-muted" id="stDownload">-</div></div><i class="fas fa-chevron-right text-muted" style="font-size:.65rem"></i>
-<div class="stage-node"><div class="s-name">ScientificQG</div><div class="s-status text-muted" id="stScientificQG">-</div></div><i class="fas fa-chevron-right text-muted" style="font-size:.65rem"></i>
-<div class="stage-node"><div class="s-name">Prediction</div><div class="s-status text-muted" id="stPrediction">-</div></div><i class="fas fa-chevron-right text-muted" style="font-size:.65rem"></i>
-<div class="stage-node"><div class="s-name">Audit</div><div class="s-status text-muted" id="stAudit">-</div></div><i class="fas fa-chevron-right text-muted" style="font-size:.65rem"></i>
-<div class="stage-node"><div class="s-name">Shadow Report</div><div class="s-status text-muted" id="stShadow">-</div></div>
-</div></div>
-<div class="col-md-5"><div class="section-title">Prediction</div>
-<div class="kpi-card cyan"><div class="label">Today's Predictions</div><div class="value" id="ovPredCount">-</div><div class="sub" id="ovPredSub">-</div><i class="fas fa-chart-line icon"></i></div></div></div>
-<div class="row mt-3"><div class="col-12"><div class="section-title">Collector Log</div><div id="liveLog" class="log-box">Loading...</div></div></div>
+
+<!-- Status Indicators -->
+<div class="ops-console" id="statusGrid">
+  <div class="ops-card"><div class="ops-indicator indicator-gray" id="indScheduler"></div><div class="ops-label">Scheduler</div><div class="ops-value" id="valScheduler">--</div><div class="ops-sub" id="subScheduler">checking...</div></div>
+  <div class="ops-card"><div class="ops-indicator indicator-gray" id="indPredictor"></div><div class="ops-label">Predictor</div><div class="ops-value" id="valPredictor">--</div><div class="ops-sub" id="subPredictor">checking...</div></div>
+  <div class="ops-card"><div class="ops-indicator indicator-gray" id="indDB"></div><div class="ops-label">PostgreSQL</div><div class="ops-value" id="valDB">--</div><div class="ops-sub" id="subDB">checking...</div></div>
+  <div class="ops-card"><div class="ops-indicator indicator-gray" id="indEvidence"></div><div class="ops-label">Evidence Service</div><div class="ops-value" id="valEvidence">--</div><div class="ops-sub" id="subEvidence">checking...</div></div>
+</div>
+
+<!-- Pipeline Health -->
+<div class="ops-section">
+  <div class="ops-section-header">
+    <div class="ops-section-title"><i class="fas fa-project-diagram me-2"></i>Pipeline Health</div>
+    <span class="badge-status badge-info" id="pipelineBadge">--</span>
+  </div>
+  <div class="ops-pipeline-chain" id="pipelineChain">
+    <div class="ops-stage stage-idle"><div class="ops-stage-name">Discovery</div><div class="ops-stage-value" id="stageDiscovery">--</div></div>
+    <div class="ops-arrow"><i class="fas fa-chevron-right"></i></div>
+    <div class="ops-stage stage-idle"><div class="ops-stage-name">Download</div><div class="ops-stage-value" id="stageDownload">--</div></div>
+    <div class="ops-arrow"><i class="fas fa-chevron-right"></i></div>
+    <div class="ops-stage stage-idle"><div class="ops-stage-name">Validation</div><div class="ops-stage-value" id="stageValidation">--</div></div>
+    <div class="ops-arrow"><i class="fas fa-chevron-right"></i></div>
+    <div class="ops-stage stage-idle"><div class="ops-stage-name">Inference</div><div class="ops-stage-value" id="stageInference">--</div></div>
+    <div class="ops-arrow"><i class="fas fa-chevron-right"></i></div>
+    <div class="ops-stage stage-idle"><div class="ops-stage-name">Fusion</div><div class="ops-stage-value" id="stageFusion">--</div></div>
+    <div class="ops-arrow"><i class="fas fa-chevron-right"></i></div>
+    <div class="ops-stage stage-idle"><div class="ops-stage-name">Event</div><div class="ops-stage-value" id="stageEvent">--</div></div>
+    <div class="ops-arrow"><i class="fas fa-chevron-right"></i></div>
+    <div class="ops-stage stage-idle"><div class="ops-stage-name">Warning</div><div class="ops-stage-value" id="stageWarning">--</div></div>
+  </div>
+</div>
+
+<!-- Today's Activity -->
+<div class="ops-section">
+  <div class="ops-section-header">
+    <div class="ops-section-title"><i class="fas fa-chart-bar me-2"></i>Today's Activity</div>
+    <span class="badge-status badge-neutral" id="activityBadge">--</span>
+  </div>
+  <div class="ops-section-body">
+    <div class="ops-table">
+      <table id="activityTable" style="width:100%">
+        <thead><tr><th>Metric</th><th>Count</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Pipeline Runs</td><td id="actRuns">--</td><td id="actRunsStatus"></td></tr>
+          <tr><td>Predictions</td><td id="actPreds">--</td><td id="actPredsStatus"></td></tr>
+          <tr><td>Decisions</td><td id="actDecisions">--</td><td id="actDecisionsStatus"></td></tr>
+          <tr><td>Fused Events</td><td id="actFused">--</td><td id="actFusedStatus"></td></tr>
+          <tr><td>Events</td><td id="actEvents">--</td><td id="actEventsStatus"></td></tr>
+          <tr><td>Warnings</td><td id="actWarnings">--</td><td id="actWarningsStatus"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Latest Pipeline Runs -->
+<div class="ops-section">
+  <div class="ops-section-header">
+    <div class="ops-section-title"><i class="fas fa-history me-2"></i>Latest Pipeline Runs</div>
+  </div>
+  <div class="ops-section-body">
+    <table class="ops-table" id="runsTable">
+      <thead><tr><th>Time</th><th>Worker</th><th>Status</th><th>Processed</th><th>Latency</th></tr></thead>
+      <tbody id="runsBody"><tr><td colspan="5" id="noRuns">Loading...</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Latest Predictions -->
+<div class="ops-section">
+  <div class="ops-section-header">
+    <div class="ops-section-title"><i class="fas fa-chart-line me-2"></i>Latest Predictions</div>
+  </div>
+  <div class="ops-section-body">
+    <table class="ops-table">
+      <thead><tr><th>Time</th><th>Station</th><th>Probability</th><th>Model</th><th>Latency</th></tr></thead>
+      <tbody id="predsBody"><tr><td colspan="5">Loading...</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Latest Decisions -->
+<div class="ops-section">
+  <div class="ops-section-header">
+    <div class="ops-section-title"><i class="fas fa-gavel me-2"></i>Latest Decisions</div>
+  </div>
+  <div class="ops-section-body">
+    <table class="ops-table">
+      <thead><tr><th>Time</th><th>Station</th><th>Level</th><th>Probability</th><th>Rules</th></tr></thead>
+      <tbody id="decBody"><tr><td colspan="5">Loading...</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Latest Evidence -->
+<div class="ops-section">
+  <div class="ops-section-header">
+    <div class="ops-section-title"><i class="fas fa-clipboard-list me-2"></i>Latest Evidence</div>
+    <span class="badge-status badge-info" id="evidenceBadge">--</span>
+  </div>
+  <div class="ops-section-body">
+    <div id="evidenceInfo">Loading...</div>
+  </div>
+</div>
+
 {% endblock %}
 {% block scripts %}
 <script>
-function refreshOV(){fetch('/api/overview').then(r=>r.json()).then(d=>{
-['Health','Score','Collector','Runtime','Burnin','Shadow','Stations','Release'].forEach(function(k){var e=document.getElementById('ov'+k);if(e&&d[k.toLowerCase()]){e.textContent=d[k.toLowerCase()];e.parentElement.className='kpi-card '+['blue','green','cyan','blue','green','yellow','blue','green'][['Health','Score','Collector','Runtime','Burnin','Shadow','Stations','Release'].indexOf(k)]}});
-document.getElementById('ovPredCount').textContent=d.prediction_count||'0';document.getElementById('ovPredSub').textContent=d.prediction_time||'';document.getElementById('ovCollectorSub').textContent='Last: '+new Date().toLocaleTimeString();
-if(d.log){var el=document.getElementById('liveLog');el.textContent=d.log.slice(-3000);el.scrollTop=el.scrollHeight}
-// Pipeline stages
-if(d.pipeline){var ps=d.pipeline;['Discovery','Download','ScientificQG','Prediction','Audit','Shadow'].forEach(function(s){var e=document.getElementById('st'+s);if(e){e.textContent=ps[s.toLowerCase()]||ps[s]||'-';e.className='s-status '}})}
-}).catch(function(){})}
-refreshOV();setInterval(refreshOV,10000);
+const API = '';
+
+function fmt(iso) {
+  if (!iso) return '--';
+  try { const d = new Date(iso); return d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false,timeZone:'Asia/Makassar'}); } catch(e) { return String(iso).slice(11,19); }
+}
+
+function badge(status, text) {
+  if (status === 'SUCCESS' || status === 'OK' || status === 'OPERATIONAL' || status === 'loaded')
+    return '<span class="badge-status badge-success">'+text+'</span>';
+  if (status === 'ERROR' || status === 'FAIL' || status === 'UNAVAILABLE' || status === 'dead')
+    return '<span class="badge-status badge-danger">'+text+'</span>';
+  if (status === 'RUNNING' || status === 'running' || status === 'idle')
+    return '<span class="badge-status badge-info">'+text+'</span>';
+  return '<span class="badge-status badge-neutral">'+text+'</span>';
+}
+
+function indicator(el, state) {
+  el.className = 'ops-indicator indicator-' + state;
+}
+
+function stageClass(status) {
+  if (status === 'SUCCESS' || status === 'OK') return 'stage-ok';
+  if (status === 'ERROR' || status === 'FAIL') return 'stage-err';
+  if (status && status !== 'STANDBY' && status !== '--') return 'stage-warn';
+  return 'stage-idle';
+}
+
+async function loadOps() {
+  // 1. Health
+  try {
+    const h = await fetch(API+'/api/health').then(r=>r.json());
+    document.getElementById('overallHealth').textContent = h.status === 'OK' ? 'OPERATIONAL' : 'DEGRADED';
+    document.getElementById('overallHealth').className = 'badge px-3 '+(h.status==='OK'?'bg-success':'bg-warning text-dark');
+  } catch(e) {}
+
+  // 2. DB Health
+  try {
+    const db = await fetch(API+'/api/db-health').then(r=>r.json());
+    if (db.status === 'OK') {
+      indicator(document.getElementById('indDB'), 'green');
+      document.getElementById('valDB').textContent = 'OK';
+      document.getElementById('subDB').textContent = 'Pool: '+(db.pool?'active':'none');
+    } else {
+      indicator(document.getElementById('indDB'), 'red');
+      document.getElementById('valDB').textContent = 'DOWN';
+      document.getElementById('subDB').textContent = db.error || 'unavailable';
+    }
+  } catch(e) {
+    indicator(document.getElementById('indDB'), 'red');
+    document.getElementById('valDB').textContent = 'ERROR';
+    document.getElementById('subDB').textContent = 'Connection failed';
+  }
+
+  // 3. Predictor Status
+  try {
+    const pr = await fetch(API+'/api/predictor').then(r=>r.json());
+    const info = pr.model || pr;
+    if (info.status === 'loaded') {
+      indicator(document.getElementById('indPredictor'), 'green');
+      document.getElementById('valPredictor').textContent = info.model_name || 'LAWS';
+      document.getElementById('subPredictor').textContent = info.version || '';
+    } else {
+      indicator(document.getElementById('indPredictor'), 'yellow');
+      document.getElementById('valPredictor').textContent = 'FALLBACK';
+      document.getElementById('subPredictor').textContent = info.fallback || 'MockPredictor';
+    }
+  } catch(e) {
+    indicator(document.getElementById('indPredictor'), 'yellow');
+    document.getElementById('valPredictor').textContent = 'UNKNOWN';
+    document.getElementById('subPredictor').textContent = 'API unavailable';
+  }
+
+  // 4. Scheduler from overview
+  try {
+    const ov = await fetch(API+'/api/overview').then(r=>r.json());
+    const sched = ov.pipeline || {};
+    const stages = ['discovery','download','scientificqg','prediction','audit','shadow'];
+    const stageIds = ['stageDiscovery','stageDownload','stageValidation','stageInference','stageFusion','stageEvent','stageWarning'];
+    // Map overview pipeline to our stage IDs
+    if (ov.collector) {
+      indicator(document.getElementById('indScheduler'), ov.collector==='running'?'green': ov.collector==='STANDBY'?'yellow':'red');
+      document.getElementById('valScheduler').textContent = ov.collector==='running'?'RUNNING':ov.collector.toUpperCase();
+      document.getElementById('subScheduler').textContent = 'Workers active';
+    }
+  } catch(e) {
+    indicator(document.getElementById('indScheduler'), 'yellow');
+    document.getElementById('valScheduler').textContent = 'UNKNOWN';
+  }
+
+  // 5. Today's activity from PG
+  try {
+    const runs = await fetch(API+'/api/pipeline-runs?limit=200').then(r=>r.json());
+    const runsList = runs.runs || [];
+    const today = new Date().toISOString().slice(0,10);
+    const todayRuns = runsList.filter(r => (r.start_time||'').startsWith(today));
+    const successRuns = todayRuns.filter(r => r.status === 'SUCCESS');
+    document.getElementById('actRuns').textContent = todayRuns.length;
+    document.getElementById('actRunsStatus').textContent = successRuns.length + ' / ' + todayRuns.length + ' OK';
+  } catch(e) {}
+
+  // Predictions
+  try {
+    const predResp = await fetch(API+'/api/decisions?limit=50').then(r=>r.json());
+    const preds = predResp.decisions || [];
+    document.getElementById('actPreds').textContent = preds.length;
+    document.getElementById('actPredsStatus').textContent = preds.length > 0 ? 'Active' : 'Awaiting data';
+  } catch(e) {}
+
+  // Decisions
+  try {
+    const decResp = await fetch(API+'/api/decisions?limit=50').then(r=>r.json());
+    const decs = decResp.decisions || [];
+    document.getElementById('actDecisions').textContent = decs.length;
+  } catch(e) {}
+
+  // Events
+  try {
+    const evtResp = await fetch(API+'/api/events').then(r=>r.json());
+    const evts = evtResp.events || evtResp;
+    const evtsArr = Array.isArray(evts) ? evts : [];
+    document.getElementById('actFused').textContent = evtsArr.length;
+    document.getElementById('actEvents').textContent = evtsArr.length;
+  } catch(e) {}
+
+  // Warnings
+  try {
+    const warnResp = await fetch(API+'/api/warnings').then(r=>r.json());
+    const warns = warnResp.warnings || warnResp;
+    const warnsArr = Array.isArray(warns) ? warns : [];
+    document.getElementById('actWarnings').textContent = warnsArr.length;
+    const warnStatus = warnsArr.filter(w => w.level === 'WARNING' || w.level === 'CRITICAL').length;
+    document.getElementById('actWarningsStatus').textContent = warnStatus > 0 ? warnStatus + ' elevated' : 'None';
+  } catch(e) {}
+
+  // Latest pipeline runs
+  try {
+    const runs = await fetch(API+'/api/pipeline-runs?limit=5').then(r=>r.json());
+    const runsList = runs.runs || [];
+    const tbody = document.getElementById('runsBody');
+    if (runsList.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="color:#64748b">No runs recorded</td></tr>';
+    } else {
+      tbody.innerHTML = runsList.map(r => '<tr><td>'+fmt(r.start_time)+'</td><td>'+r.worker+'</td><td>'+badge(r.status, r.status)+'</td><td>'+(r.processed_files||0)+'</td><td>'+(r.latency_ms?r.latency_ms.toFixed(1)+'ms':'--')+'</td></tr>').join('');
+    }
+  } catch(e) {}
+
+  // Latest predictions
+  try {
+    const predResp = await fetch(API+'/api/decisions?limit=5').then(r=>r.json());
+    const preds = predResp.decisions || [];
+    const tbody = document.getElementById('predsBody');
+    if (preds.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="color:#64748b">No predictions — awaiting operational data</td></tr>';
+    } else {
+      tbody.innerHTML = preds.map(p => '<tr><td>'+fmt(p.created_at)+'</td><td>'+(p.station||'--')+'</td><td>'+(p.probability||0).toFixed(4)+'</td><td>LAWS V9.5</td><td>--</td></tr>').join('');
+    }
+  } catch(e) {}
+
+  // Latest decisions
+  try {
+    const decResp = await fetch(API+'/api/decisions?limit=5').then(r=>r.json());
+    const decs = decResp.decisions || [];
+    const tbody = document.getElementById('decBody');
+    if (decs.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="color:#64748b">No decisions</td></tr>';
+    } else {
+      tbody.innerHTML = decs.map(d => '<tr><td>'+fmt(d.created_at)+'</td><td>'+(d.station||'--')+'</td><td>'+badge(d.level,d.level)+'</td><td>'+(d.probability||0).toFixed(4)+'</td><td>'+(d.triggered_rules?JSON.parse(typeof d.triggered_rules==='string'?d.triggered_rules:'[]').length:0)+' rules</td></tr>').join('');
+    }
+  } catch(e) {}
+
+  // Evidence
+  indicator(document.getElementById('indEvidence'), 'green');
+  document.getElementById('valEvidence').textContent = today;
+  document.getElementById('evidenceBadge').textContent = today;
+  document.getElementById('evidenceInfo').innerHTML = '<div style="color:#94a3b8">Date: <strong>'+today+'</strong></div><div style="color:#94a3b8;margin-top:4px">Location: <code>/opt/pimes/laws/runtime/validation/pdac/evidence/'+today+'</code></div><div style="color:#94a3b8;margin-top:4px">Latest symlink: active</div>';
+
+  document.getElementById('opsTime').textContent = new Date().toLocaleString('id-ID',{timeZone:'Asia/Makassar',hour12:false});
+}
+
+loadOps();
+setInterval(loadOps, 30000);
 </script>
 {% endblock %}

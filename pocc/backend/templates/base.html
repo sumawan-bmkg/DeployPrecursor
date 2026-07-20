@@ -32,6 +32,9 @@
 <a href="/waveform" class="sidebar-item{% if active_page=='waveform'%} active{%endif%}"><i class="fas fa-wave-square"></i><span>Waveform</span></a>
 <a href="/stations" class="sidebar-item{% if active_page=='stations'%} active{%endif%}"><i class="fas fa-satellite-dish"></i><span>Stations</span></a>
 <a href="/system" class="sidebar-item{% if active_page=='system'%} active{%endif%}"><i class="fas fa-cogs"></i><span>System</span></a>
+<hr class="sidebar-divider">
+<a href="/events" class="sidebar-item{% if active_page=='events'%} active{%endif%}"><i class="fas fa-exclamation-triangle"></i><span>Events</span></a>
+<a href="/warnings" class="sidebar-item{% if active_page=='warnings'%} active{%endif%}"><i class="fas fa-bell"></i><span>Warnings</span></a>
 </div></div>
 <div class="bocc-main">{% block content %}{% endblock %}</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Events — BOCC{% endblock %}
+{% block content %}
+<style>
+.evt-table { font-size:.85rem; }
+.evt-table td { vertical-align:middle; }
+.badge-state { font-size:.7rem; }
+</style>
+<h4 class="fw-bold mb-3"><i class="fas fa-exclamation-triangle text-warning me-2"></i>Precursor Events</h4>
+<div class="table-responsive">
+<table class="table table-dark table-sm evt-table">
+<thead>
+<tr><th>Event ID</th><th>State</th><th>Stations</th><th>Prob</th><th>Peak</th><th>Created</th><th>Updated</th></tr>
+</thead>
+<tbody id="evtBody">
+<tr><td colspan="7" class="text-muted">Loading...</td></tr>
+</tbody>
+</table>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function refreshEvents(){
+    var r=await fetch('/api/events').then(r=>r.json());
+    var t=document.getElementById('evtBody');
+    if(!r.events||!r.events.length){t.innerHTML='<tr><td colspan="7" class="text-muted">No events</td></tr>';return}
+    t.innerHTML=r.events.map(function(e){
+        var cls=e.state==='PEAK'||e.state==='CRITICAL'?'danger':e.state==='ACTIVE'||e.state==='WARNING'?'warning':e.state==='NEW'?'info':'secondary';
+        return '<tr><td><a href="/api/events/'+e.event_id+'" target="_blank" class="text-light">'+e.event_id+'</a></td><td><span class="badge bg-'+cls+' badge-state">'+e.state+'</span></td><td>'+(e.stations||[]).join(', ')+'</td><td>'+(e.fused_probability*100).toFixed(1)+'%</td><td>'+(e.peak_probability*100).toFixed(1)+'%</td><td><small>'+(e.created_at||'').slice(0,19)+'</small></td><td><small>'+(e.updated_at||'').slice(0,19)+'</small></td></tr>';
+    }).join('');
+}
+refreshEvents();setInterval(refreshEvents,10000);
+</script>
+{% endblock %}

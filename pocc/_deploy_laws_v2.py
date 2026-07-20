@@ -195,13 +195,13 @@ def deploy():
 
     # ── Restart ──
     print("  [4] Restarting...")
-    run("pkill -f 'collector.scheduler' 2>/dev/null")
-    run("pkill -f 'collector.__main__' 2>/dev/null")
+    ssh().exec_command("pkill -f 'collector.scheduler' 2>/dev/null")
+    ssh().exec_command("pkill -f 'collector.__main__' 2>/dev/null")
     time.sleep(1)
-    run("pkill -f 'uvicorn.*backend.main' 2>/dev/null")
+    ssh().exec_command(f"pkill -f 'uvicorn.*backend.main' 2>/dev/null")
     time.sleep(1)
 
-    run(f"cd {REMOTE} && nohup {VENV} -m uvicorn backend.main:app --host 0.0.0.0 --port {PORT} > {REMOTE}/pocc.log 2>&1 </dev/null &")
+    ssh().exec_command(f"cd {REMOTE} && nohup {VENV} -m uvicorn backend.main:app --host 0.0.0.0 --port {PORT} > {REMOTE}/pocc.log 2>&1 </dev/null &")
     time.sleep(4)
     h = run(f"curl -s -o /dev/null -w '%{{http_code}}' http://127.0.0.1:{PORT}/api/health 2>/dev/null")
     backend_ok = h == "200"
