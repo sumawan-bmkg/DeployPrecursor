@@ -7,3 +7,4 @@ from .spectral import SpectralRule
 from .entropy import EntropyRule
 from .cross_correlation import CrossCorrelationRule
 from .psd import PSDRule
+from .flatline import FlatlineRule

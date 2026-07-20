@@ -7,4 +7,5 @@ from .discovery import discover_rules, DEFAULT_RULES
 from .rules import (
     QCRule, RangeRule, ContinuityRule, MissingSampleRule,
     SpectralRule, EntropyRule, CrossCorrelationRule, PSDRule,
+    FlatlineRule,
 )

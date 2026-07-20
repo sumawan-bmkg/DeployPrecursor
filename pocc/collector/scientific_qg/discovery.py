@@ -18,7 +18,7 @@ def discover_rules():
             if modname == "base" or modname.startswith("_"):
                 continue
             try:
-                mod = importlib.import_module("scientific_qg.rules." + modname)
+                mod = importlib.import_module(f".rules.{modname}", package=__package__)
                 for name, obj in inspect.getmembers(mod):
                     if (inspect.isclass(obj) and issubclass(obj, QCRule)
                             and obj is not QCRule and obj.name != "base_rule"):
