@@ -1,9 +1,9 @@
 {% extends 'base.html' %}{% block title %}Mission Overview — BOCC{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3"><h4 class="mb-0 fw-bold"><i class="fas fa-rocket me-2 text-primary"></i>Mission Overview</h4><span class="text-muted small" id="ovTimestamp">Today's Operational Status</span></div>
+<div class="d-flex justify-content-between align-items-center mb-3"><h4 class="mb-0 fw-bold"><i class="fas fa-rocket me-2 text-primary"></i>Mission Overview</h4><span class="text-muted small" id="ovTimestamp">LAWS V2 — Operational</span></div>
 <div class="mission-grid" id="missionGrid">
 <div class="kpi-card blue"><div class="label">Overall Health</div><div class="value" id="ovHealth">-</div><div class="sub">System Status</div><i class="fas fa-heartbeat icon"></i></div>
-<div class="kpi-card green"><div class="label">Scientific Score</div><div class="value" id="ovScore">-</div><div class="sub">PSEP Score</div><i class="fas fa-flask icon"></i></div>
+<div class="kpi-card green"><div class="label">ScientificQG Score</div><div class="value" id="ovScore">-</div><div class="sub">PSEP Score</div><i class="fas fa-flask icon"></i></div>
 <div class="kpi-card cyan"><div class="label">Collector</div><div class="value" id="ovCollector">-</div><div class="sub" id="ovCollectorSub">Last: --</div><i class="fas fa-download icon"></i></div>
 <div class="kpi-card blue"><div class="label">Runtime</div><div class="value" id="ovRuntime">-</div><div class="sub">Pipeline</div><i class="fas fa-microchip icon"></i></div>
 <div class="kpi-card green"><div class="label">Burn-in</div><div class="value" id="ovBurnin">-</div><div class="sub" id="ovBurninSub">Cycle</div><i class="fas fa-fire icon"></i></div>
@@ -12,25 +12,27 @@
 <div class="kpi-card green"><div class="label">Release Gate</div><div class="value" id="ovRelease">-</div><div class="sub">Phase</div><i class="fas fa-tags icon"></i></div>
 </div>
 <div class="row mt-3">
-<div class="col-md-7"><div class="section-title">Pipeline Status</div>
+<div class="col-md-7"><div class="section-title">LAWS V2 Pipeline</div>
 <div class="stage-chain">
-<div class="stage-node"><div class="s-name">Reader</div><div class="s-status text-muted" id="stReader">-</div></div><i class="fas fa-chevron-right text-muted" style="font-size:.65rem"></i>
-<div class="stage-node"><div class="s-name">PC3</div><div class="s-status text-muted" id="stPC3">-</div></div><i class="fas fa-chevron-right text-muted" style="font-size:.65rem"></i>
-<div class="stage-node"><div class="s-name">Tensor</div><div class="s-status text-muted" id="stTensor">-</div></div><i class="fas fa-chevron-right text-muted" style="font-size:.65rem"></i>
-<div class="stage-node"><div class="s-name">Inference</div><div class="s-status text-muted" id="stInference">-</div></div><i class="fas fa-chevron-right text-muted" style="font-size:.65rem"></i>
-<div class="stage-node"><div class="s-name">Evidence</div><div class="s-status text-muted" id="stEvidence">-</div></div><i class="fas fa-chevron-right text-muted" style="font-size:.65rem"></i>
-<div class="stage-node"><div class="s-name">Fusion</div><div class="s-status text-muted" id="stFusion">-</div></div>
+<div class="stage-node"><div class="s-name">Discovery</div><div class="s-status text-muted" id="stDiscovery">-</div></div><i class="fas fa-chevron-right text-muted" style="font-size:.65rem"></i>
+<div class="stage-node"><div class="s-name">Download</div><div class="s-status text-muted" id="stDownload">-</div></div><i class="fas fa-chevron-right text-muted" style="font-size:.65rem"></i>
+<div class="stage-node"><div class="s-name">ScientificQG</div><div class="s-status text-muted" id="stScientificQG">-</div></div><i class="fas fa-chevron-right text-muted" style="font-size:.65rem"></i>
+<div class="stage-node"><div class="s-name">Prediction</div><div class="s-status text-muted" id="stPrediction">-</div></div><i class="fas fa-chevron-right text-muted" style="font-size:.65rem"></i>
+<div class="stage-node"><div class="s-name">Audit</div><div class="s-status text-muted" id="stAudit">-</div></div><i class="fas fa-chevron-right text-muted" style="font-size:.65rem"></i>
+<div class="stage-node"><div class="s-name">Shadow Report</div><div class="s-status text-muted" id="stShadow">-</div></div>
 </div></div>
 <div class="col-md-5"><div class="section-title">Prediction</div>
 <div class="kpi-card cyan"><div class="label">Today's Predictions</div><div class="value" id="ovPredCount">-</div><div class="sub" id="ovPredSub">-</div><i class="fas fa-chart-line icon"></i></div></div></div>
-<div class="row mt-3"><div class="col-12"><div class="section-title">Live Log</div><div id="liveLog" class="log-box">Loading...</div></div></div>
+<div class="row mt-3"><div class="col-12"><div class="section-title">Collector Log</div><div id="liveLog" class="log-box">Loading...</div></div></div>
 {% endblock %}
 {% block scripts %}
 <script>
 function refreshOV(){fetch('/api/overview').then(r=>r.json()).then(d=>{
 ['Health','Score','Collector','Runtime','Burnin','Shadow','Stations','Release'].forEach(function(k){var e=document.getElementById('ov'+k);if(e&&d[k.toLowerCase()]){e.textContent=d[k.toLowerCase()];e.parentElement.className='kpi-card '+['blue','green','cyan','blue','green','yellow','blue','green'][['Health','Score','Collector','Runtime','Burnin','Shadow','Stations','Release'].indexOf(k)]}});
 document.getElementById('ovPredCount').textContent=d.prediction_count||'0';document.getElementById('ovPredSub').textContent=d.prediction_time||'';document.getElementById('ovCollectorSub').textContent='Last: '+new Date().toLocaleTimeString();
-if(d.log){var el=document.getElementById('liveLog');el.innerHTML=d.log.split('\n').map(function(l){return '<div>'+l+'</div>';}).join('');el.scrollTop=el.scrollHeight}
+if(d.log){var el=document.getElementById('liveLog');el.textContent=d.log.slice(-3000);el.scrollTop=el.scrollHeight}
+// Pipeline stages
+if(d.pipeline){var ps=d.pipeline;['Discovery','Download','ScientificQG','Prediction','Audit','Shadow'].forEach(function(s){var e=document.getElementById('st'+s);if(e){e.textContent=ps[s.toLowerCase()]||ps[s]||'-';e.className='s-status '}})}
 }).catch(function(){})}
 refreshOV();setInterval(refreshOV,10000);
 </script>

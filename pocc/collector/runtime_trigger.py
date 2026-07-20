@@ -5,7 +5,7 @@ Phase 8: Runtime Trigger — Auto-trigger RuntimeKernel after new data.
 import os, sys, json, time, subprocess, logging
 from datetime import datetime, timezone
 from pathlib import Path
-from scheduler_engine import BaseWorker, manifest, PDAC_DIR
+from collector.scheduler_engine import BaseWorker, manifest, PDAC_DIR
 
 log = logging.getLogger("runtime_trigger")
 

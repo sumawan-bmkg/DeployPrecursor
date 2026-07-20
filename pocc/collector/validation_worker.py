@@ -6,7 +6,7 @@ Event-based: runs after each download.
 import os, sys, json, time, hashlib, logging
 from datetime import datetime, timezone
 from pathlib import Path
-from scheduler_engine import BaseWorker, manifest, PDAC_DIR
+from collector.scheduler_engine import BaseWorker, manifest, PDAC_DIR
 
 log = logging.getLogger("validation")
 

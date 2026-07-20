@@ -2,67 +2,124 @@
 {% block title %}BOCC — Collector Command Center{% endblock %}
 {% block content %}
 <style>
-.section-title { font-size:.72rem; text-transform:uppercase; letter-spacing:.5px; color:#64748b; margin-bottom:8px; }
-.metric-card { background:#1e293b; border-radius:8px; padding:12px; text-align:center; border:1px solid #334155; }
-.metric-card .value { font-size:1.3rem; font-weight:700; color:#3b82f6; }
-.metric-card .label { font-size:.7rem; color:#64748b; text-transform:uppercase; }
-.worker-card { background:#1e293b; border-radius:8px; padding:12px; border-left:3px solid #3b82f6; margin-bottom:8px; }
-.log-box { background:#0f172a; color:#10b981; font-family:'Courier New',monospace; font-size:.75rem; padding:8px; border-radius:6px; max-height:200px; overflow-y:auto; }
+.section-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;color:#64748b;margin-bottom:8px}
+.metric-card{background:#1e293b;border-radius:8px;padding:12px;text-align:center;border:1px solid #334155}
+.metric-card .value{font-size:1.3rem;font-weight:700;color:#3b82f6}
+.metric-card .label{font-size:.7rem;color:#64748b;text-transform:uppercase}
+.worker-card{background:#1e293b;border-radius:8px;padding:12px;border-left:3px solid #3b82f6;margin-bottom:8px}
+.log-box{background:#0f172a;color:#10b981;font-family:'Courier New',monospace;font-size:.75rem;padding:8px;border-radius:6px;max-height:240px;overflow-y:auto;white-space:pre-wrap}
+.sci-card{background:#1e293b;border-radius:8px;padding:14px;border:1px solid #334155}
+.rule-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.78rem}
+.rule-row .name{color:#e2e8f0}.rule-row .weight{color:#64748b;font-family:'Courier New',monospace}
 </style>
-<div class="page-header"><h1>Collector Command Center</h1><p>BMKG collector status</p></div>
+<div class="page-header"><h1>Collector Command Center</h1><p>LAWS V2 — Production Pipeline</p></div>
 
 <div class="row g-3 mb-4">
-  <div class="col-md-3"><div class="metric-card"><div class="label">Files Total</div><div class="value" id="totalFiles">—</div></div></div>
-  <div class="col-md-3"><div class="metric-card"><div class="label">Success</div><div class="value good" id="successFiles">—</div></div></div>
-  <div class="col-md-3"><div class="metric-card"><div class="label">Failed</div><div class="value bad" id="failedFiles">—</div></div></div>
-  <div class="col-md-3"><div class="metric-card"><div class="label">Pending</div><div class="value warn" id="pendingFiles">—</div></div></div>
+  <div class="col-md-3"><div class="metric-card"><div class="label">Scheduler</div><div class="value" id="schedulerStatus">—</div><div class="sub" id="schedulerUptime">—</div></div></div>
+  <div class="col-md-3"><div class="metric-card"><div class="label">Stations</div><div class="value good" id="totalStations">—</div><div class="sub" id="totalFiles">—</div></div></div>
+  <div class="col-md-3"><div class="metric-card"><div class="label">Queue</div><div class="value" id="queueStats">—</div><div class="sub" id="queueSub">—</div></div></div>
+  <div class="col-md-3"><div class="metric-card"><div class="label">Success Rate</div><div class="value good" id="successRate">—</div><div class="sub">download reliability</div></div></div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-8">
+    <div class="card"><div class="card-header"><div class="card-title">Worker Status (6 Workers)</div></div>
+    <div class="card-body p-2" id="workerList">Loading...</div></div>
+  </div>
+  <div class="col-md-4">
+    <div class="sci-card"><div class="section-title">ScientificQG Rules (8)</div><div id="ruleList">Loading...</div></div>
+  </div>
 </div>
 
 <div class="row g-3">
   <div class="col-md-6">
-    <div class="card"><div class="card-header"><div class="card-title">Collector Workers</div></div>
-    <div id="workerList"></div></div>
+    <div class="card"><div class="card-header"><div class="card-title">Remote Inventory</div></div>
+    <div class="card-body p-2" id="remoteInfo">Loading...</div></div>
   </div>
   <div class="col-md-6">
-    <div class="card"><div class="card-header"><div class="card-title">Real-time Log</div></div>
+    <div class="card"><div class="card-header"><div class="card-title">Scheduler Log</div></div>
     <div class="log-box" id="logBox">Waiting for collector data...</div></div>
   </div>
 </div>
 
 <script>
+const WORKER_ICONS = {
+  discovery: 'fa-search', download: 'fa-download', validation: 'fa-check-double',
+  runtime: 'fa-microchip', audit: 'fa-clipboard-check', rawdata: 'fa-database'
+};
+const WORKER_INTERVALS = {
+  discovery: '5m', download: '10m', validation: '1m', runtime: '1m', audit: '1h', rawdata: '24h'
+};
+const RULES = [
+  {name:'RangeRule',weight:'0.30',prio:'CRITICAL'},
+  {name:'ContinuityRule',weight:'0.20',prio:'HIGH'},
+  {name:'CrossCorrelationRule',weight:'0.10→0.20',prio:'MEDIUM'},
+  {name:'FlatlineRule',weight:'0.15',prio:'HIGH'},
+  {name:'MissingSampleRule',weight:'0.10',prio:'HIGH'},
+  {name:'EntropyRule',weight:'0.10',prio:'MEDIUM'},
+  {name:'SpectralRule',weight:'0.10',prio:'MEDIUM'},
+  {name:'PSDRule',weight:'0.00 (disabled)',prio:'DISABLED'}
+];
+
 async function loadCollector() {
-  let hm = {};
-  try { hm = await fetch('/api/health-model').then(r=>r.json()); } catch(e) {}
-  const collector = (hm.components||{}).collector || {};
-  document.getElementById('totalFiles').textContent = collector.files_total || collector.total_files || '—';
-  document.getElementById('successFiles').textContent = collector.success||'—';
-  document.getElementById('failedFiles').textContent = collector.failed||'—';
-  document.getElementById('pendingFiles').textContent = collector.pending||'—';
+  let data = {};
+  try { data = await fetch('/api/collector').then(r=>r.json()); } catch(e) {}
+  const m = data.manifest || {};
+  const w = data.workers || {};
+  const q = data.queue || {};
+  const h = data.health || {};
+  const rem = data.remote || {};
+  const sched = data.scheduler || {};
 
-  const workers = collector.workers || [
-    {name:'PDAC Worker',status:'RUNNING',files:collector.files_total||0,last_seen:'now'},
-    {name:'RDMC Worker',status:'STANDBY',files:0,last_seen:'—'}
-  ];
+  // Metrics
+  document.getElementById('schedulerStatus').textContent = sched.status || m.status || '—';
+  document.getElementById('schedulerUptime').textContent = sched.uptime ? 'Uptime: ' + Math.floor(sched.uptime/60) + 'm' : '';
+  document.getElementById('totalStations').textContent = rem.stations || '—';
+  document.getElementById('totalFiles').textContent = (rem.files||0) + ' files (' + (rem.size_gb||0) + ' GB)';
+  document.getElementById('queueStats').textContent = (q.SUCCESS||0) + '/' + ((q.WAITING||0)+(q.RUNNING||0)+(q.SUCCESS||0)+(q.FAILED||0));
+  document.getElementById('queueSub').textContent = 'success/total';
+  document.getElementById('successRate').textContent = (h.success_rate||100).toFixed(1) + '%';
 
-  document.getElementById('workerList').innerHTML = workers.map(w => `
-    <div class="worker-card">
-      <div class="d-flex justify-content-between">
-        <span><strong>${w.name||'?'}</strong></span>
-        <span class="badge ${w.status==='RUNNING'?'bg-success':w.status==='STANDBY'?'bg-warning text-dark':'bg-secondary'}">${w.status||'?'}</span>
-      </div>
-      <div class="mt-1 small text-secondary">Files: ${w.files||0} — Last seen: ${w.last_seen||'?'}</div>
-    </div>
-  `).join('');
+  // Workers
+  const workerHtml = Object.entries(w).map(([name, info]) => {
+    const status = info.status || 'idle';
+    const badgeClass = status === 'running' ? 'bg-success' : status === 'error' ? 'bg-danger' : 'bg-secondary';
+    const icon = WORKER_ICONS[name] || 'fa-cog';
+    const interval = WORKER_INTERVALS[name] || '?';
+    const lastOk = info.last_success ? new Date(info.last_success).toLocaleString() : '—';
+    const errors = info.retry_count || 0;
+    return '<div class="worker-card"><div class="d-flex justify-content-between align-items-center">' +
+      '<span><i class="fas '+icon+' me-2 text-primary"></i><strong>'+( name.replace('_worker','').replace('_',' ') )+'</strong></span>' +
+      '<span class="badge '+badgeClass+'">'+status.toUpperCase()+'</span></div>' +
+      '<div class="mt-1 small text-secondary" style="display:flex;justify-content:space-between">' +
+      '<span>Interval: '+interval+'</span><span>Last OK: '+lastOk+'</span>' +
+      (errors ? '<span class="text-danger">'+errors+' errors</span>' : '') +
+      '</div></div>';
+  }).join('');
+  document.getElementById('workerList').innerHTML = workerHtml || '<div class="text-muted p-2">No workers registered</div>';
 
-  const logLines = [
-    `[${new Date().toISOString()}] Collector manifest loaded`,
-    `[${new Date().toISOString()}] Queue status: success=${collector.success||'?'} failed=${collector.failed||'?'}`,
-    `[${new Date().toISOString()}] Collector score: ${(collector.score||0).toFixed(1)}%`,
-    `[${new Date().toISOString()}] Pipeline status: ${(hm.components||{}).runtime?.status||'?'}`,
-  ];
-  document.getElementById('logBox').innerHTML = logLines.join('<br>');
+  // Rules
+  document.getElementById('ruleList').innerHTML = RULES.map(r => {
+    const clr = r.prio==='CRITICAL'?'#ef4444':r.prio==='HIGH'?'#f59e0b':r.prio==='DISABLED'?'#6b7280':'#3b82f6';
+    return '<div class="rule-row"><span class="name">'+r.name+'</span>' +
+      '<span style="color:'+clr+';font-size:.68rem">'+r.prio+'</span>' +
+      '<span class="weight">w='+r.weight+'</span></div>';
+  }).join('');
+
+  // Remote
+  const stationCount = Object.keys(rem.station_details||{}).length;
+  document.getElementById('remoteInfo').innerHTML =
+    '<div class="small text-secondary p-2">' +
+    '<div>Stations: <strong>'+(rem.stations||0)+'</strong> | Files: <strong>'+(rem.files||0)+'</strong> | Size: <strong>'+(rem.size_gb||0)+' GB</strong></div>' +
+    '<div>Last discovery: <strong>'+(rem.last_discovery ? new Date(rem.last_discovery).toLocaleString() : '—')+'</strong></div>' +
+    '<div>Latency: <strong>'+(rem.latency||0).toFixed(2)+'s</strong></div>' +
+    '</div>';
+
+  // Log
+  const log = data.log || '';
+  document.getElementById('logBox').textContent = log || 'No log data yet.';
 }
 loadCollector();
-setInterval(loadCollector,30000);
+setInterval(loadCollector, 15000);
 </script>
 {% endblock %}

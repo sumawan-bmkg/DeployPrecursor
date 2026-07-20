@@ -499,7 +499,30 @@ async def api_overview():
     if rdmc.exists():
         result["runtime"] = "ACTIVE"
     
+    # ── LAWS V2 Pipeline Status ──
+    result["pipeline"] = {
+        "discovery": "ACTIVE" if mf.exists() and d.get("workers", {}).get("discovery_worker", {}).get("status") == "running" else "STANDBY",
+        "download": "ACTIVE" if mf.exists() and d.get("workers", {}).get("download_worker", {}).get("status") == "running" else "STANDBY",
+        "scientificqg": "ENABLED",
+        "prediction": "MOCK",
+        "audit": "ACTIVE" if mf.exists() and d.get("workers", {}).get("audit_worker", {}).get("status") == "running" else "STANDBY",
+        "shadow": "REPORTING",
+    }
+    # Override with real worker status from manifest
+    if mf.exists():
+        try:
+            w = d.get("workers", {})
+            if "discovery_worker" in w:
+                result["pipeline"]["discovery"] = w["discovery_worker"].get("status", "STANDBY").upper()
+            if "download_worker" in w:
+                result["pipeline"]["download"] = w["download_worker"].get("status", "STANDBY").upper()
+            if "audit_worker" in w:
+                result["pipeline"]["audit"] = w["audit_worker"].get("status", "STANDBY").upper()
+        except:
+            pass
+    
     return result
+
 
 @app.get("/api/collector")
 async def api_collector():

@@ -5,7 +5,7 @@ Phase 9+10+14: Audit Worker — Hourly/daily/weekly reports and health metrics.
 import os, sys, json, time, logging
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from scheduler_engine import BaseWorker, manifest, PDAC_DIR
+from collector.scheduler_engine import BaseWorker, manifest, PDAC_DIR
 
 log = logging.getLogger("audit")
 

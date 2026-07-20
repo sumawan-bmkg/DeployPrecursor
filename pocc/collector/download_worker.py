@@ -7,7 +7,7 @@ import os, sys, json, time, hashlib, uuid, paramiko, logging
 from datetime import datetime, timezone
 from pathlib import Path
 from queue import Queue
-from scheduler_engine import BaseWorker, manifest, PDAC_DIR
+from collector.scheduler_engine import BaseWorker, manifest, PDAC_DIR
 
 log = logging.getLogger("download")
 
