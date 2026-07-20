@@ -208,7 +208,8 @@ def deploy():
     print(f"      Backend: {'OK' if backend_ok else f'FAIL ({h})'}")
 
     if mode in ("full", "collector", "quick"):
-        run(f"cd {REMOTE} && nohup {VENV} -m collector > {REMOTE}/collector.log 2>&1 </dev/null &")
+        # Start collector — don't wait for stdout
+        ssh().exec_command(f"cd {REMOTE} && nohup {VENV} -m collector > {REMOTE}/collector.log 2>&1 </dev/null &")
         time.sleep(3)
         col = run("ps aux | grep -c '[c]ollector' || echo 0")
         collector_ok = int(col) > 0

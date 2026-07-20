@@ -734,6 +734,12 @@ async def api_timeline_events(component: str = None, limit: int = 100):
 async def api_health_model():
     return mh_model.compute()
 
+# ── Operational Intelligence Tick (executive dashboard) ──
+@app.get("/api/oi/tick")
+async def api_oi_tick():
+    from backend.operational_intelligence import tick
+    return tick()
+
 # ── Playbook API ────────────────────────────────
 @app.get("/api/playbook/list")
 async def api_playbook_list(limit: int = 50):

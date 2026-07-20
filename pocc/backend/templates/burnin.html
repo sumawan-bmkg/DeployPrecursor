@@ -1,41 +1,54 @@
 {% extends "base.html" %}
-{% block title %}BOCC — Burn-in{% endblock %}
+{% block title %}BOCC — Burn-in Monitoring{% endblock %}
 {% block content %}
 <style>
-.bi-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-bottom:24px; }
+.bi-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; margin-bottom:24px; }
 .bi-card { background:var(--card-bg,#1e293b); border-radius:12px; padding:20px; border:1px solid var(--border,#334155); }
 .bi-card .value { font-size:1.8rem; font-weight:700; font-family:monospace; }
 .bi-card .label { font-size:.82rem; color:#94a3b8; }
+.bi-cycle { background:#1e293b; border:1px solid #334155; border-radius:8px; padding:14px; margin-bottom:10px; }
+.bi-cycle .hdr { display:flex; justify-content:space-between; align-items:center; }
+.bi-cycle .stat { color:#94a3b8; font-size:.8rem; }
 </style>
-<div class="page-header"><h1>Burn-in Monitoring</h1><p>Scientific validation cycles</p></div>
+<div class="page-header"><h1>Burn-in Monitoring</h1><p>LAWS V2 — Scientific validation cycles</p></div>
 
-<div class="bi-grid" id="biGrid"></div>
+<div class="bi-grid" id="biGrid">
+  <div class="bi-card"><div class="label">Status</div><div class="value" id="biStatus">—</div><div class="label">Pipeline stage</div></div>
+  <div class="bi-card"><div class="label">Cycles</div><div class="value" id="biCycles">—</div><div class="label">Total runs</div></div>
+  <div class="bi-card"><div class="label">Score</div><div class="value" id="biScore">—</div><div class="label">Health model</div></div>
+  <div class="bi-card"><div class="label">Fingerprints</div><div class="value" id="biFp">—</div><div class="label">Hash chain</div></div>
+</div>
 
-<div class="card"><div class="card-header"><div class="card-title">Burn-in Log</div></div>
-<div class="table-container"><table id="biTable">
-<thead><tr><th>Cycle</th><th>Timestamp</th><th>Reader (s)</th><th>Validation (s)</th><th>Tensor (s)</th><th>RAM (MB)</th><th>Prediction</th></tr></thead>
-<tbody></tbody></table></div></div>
+<div class="card"><div class="card-header"><div class="card-title">Burn-in Cycles</div></div>
+<div class="card-body p-2" id="biCycleList">Loading...</div></div>
 
 <script>
 async function loadBurnin() {
-  let pipeline = {};
-  try { pipeline = await fetch('/api/pipeline/stages').then(r=>r.json()); } catch(e) {}
-  const stages = pipeline.stages || [];
-  const burnin = stages.find(s=>s.id==='burnin') || {};
+  let data = {};
+  try { data = await fetch('/api/burnin').then(r=>r.json()); } catch(e) {}
+  const cycles = data.cycles || [];
+  const total = data.total || 0;
+  const last = cycles.length > 0 ? cycles[cycles.length-1] : {};
 
-  document.getElementById('biGrid').innerHTML = `
-    <div class="bi-card"><div class="label">Status</div><div class="value ${burnin.status==='ACTIVE'||burnin.status==='RUNNING'?'good':'warn'}">${burnin.status||'UNAVAILABLE'}</div><div class="label">Pipeline stage</div></div>
-    <div class="bi-card"><div class="label">Score</div><div class="value">${(burnin.score||0).toFixed(1)}%</div><div class="label">Health model</div></div>
-    <div class="bi-card"><div class="label">Cycles</div><div class="value">2/24</div><div class="label">Last: ${burnin.last_activity?.slice(0,16)||'?'}</div></div>
-    <div class="bi-card"><div class="label">Fingerprints</div><div class="value">—</div><div class="label">Hash chain tracking</div></div>
-  `;
+  document.getElementById('biStatus').textContent = last.verdict || (total > 0 ? 'RUNNING' : 'NOT STARTED');
+  document.getElementById('biStatus').className = last.verdict === 'PASS' ? 'value good' : last.verdict === 'FAIL' ? 'value bad' : 'value warn';
+  document.getElementById('biCycles').textContent = total;
+  document.getElementById('biScore').textContent = last.score ? (last.score*100).toFixed(1)+'%' : '—';
+  document.getElementById('biFp').textContent = last.fingerprint_count || '—';
 
-  document.querySelector('#biTable tbody').innerHTML = `
-    <tr><td>1</td><td>2026-07-14T23:50</td><td>10.07</td><td>28.72</td><td>3.76</td><td>672</td><td>prob=0.0</td></tr>
-    <tr><td>2</td><td>2026-07-15T00:51</td><td>9.89</td><td>28.67</td><td>3.69</td><td>668</td><td>prob=0.0</td></tr>
-  `;
+  document.getElementById('biCycleList').innerHTML = cycles.length === 0
+    ? '<div class="text-muted p-3">No cycles recorded yet. Burn-in will begin when collector delivers validated data.</div>'
+    : cycles.slice().reverse().map(c => {
+        const clr = c.verdict === 'PASS' ? '#00e676' : c.verdict === 'FAIL' ? '#ff5252' : '#ffd740';
+        return '<div class="bi-cycle"><div class="hdr">' +
+          '<strong>Cycle '+(c.id||c.cycle||'?')+'</strong>' +
+          '<span style="color:'+clr+'">'+(c.verdict||'?')+'</span></div>' +
+          '<div class="stat">Score: '+(c.score ? (c.score*100).toFixed(1)+'%' : '—')+
+          ' | Duration: '+(c.duration||'—')+'s'+
+          ' | Fingerprints: '+(c.fingerprint_count||'—')+'</div></div>';
+      }).join('');
 }
 loadBurnin();
-setInterval(loadBurnin,30000);
+setInterval(loadBurnin, 30000);
 </script>
 {% endblock %}
