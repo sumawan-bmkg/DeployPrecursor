@@ -510,7 +510,7 @@ async def api_overview():
         "discovery": "ACTIVE" if mf.exists() and d.get("workers", {}).get("discovery_worker", {}).get("status") == "running" else "STANDBY",
         "download": "ACTIVE" if mf.exists() and d.get("workers", {}).get("download_worker", {}).get("status") == "running" else "STANDBY",
         "scientificqg": "ENABLED",
-        "prediction": "MOCK",
+        "prediction": "ACTIVE" if Path("/opt/pimes/laws/predict_cli.py").exists() else "UNAVAILABLE",
         "audit": "ACTIVE" if mf.exists() and d.get("workers", {}).get("audit_worker", {}).get("status") == "running" else "STANDBY",
         "shadow": "REPORTING",
     }

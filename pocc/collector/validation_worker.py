@@ -3,7 +3,7 @@
 Phase 6+7: Validation Worker — Checksum + Raw Data Quality.
 Event-based: runs after each download.
 """
-import os, sys, json, time, hashlib, logging
+import os, sys, json, time, hashlib, zlib, logging
 from datetime import datetime, timezone
 from pathlib import Path
 from collector.scheduler_engine import BaseWorker, manifest, PDAC_DIR
@@ -34,10 +34,8 @@ class ValidationWorker(BaseWorker):
                     log.warning("File missing for validation: %s", local_path)
                     continue
                 
-                # Phase 6: Checksum
-                with open(local_path, "rb") as f:
-                    sha256 = hashlib.sha256(f.read()).hexdigest()
-                crc32 = "%08x" % (hashlib.crc32(open(local_path, "rb").read()) & 0xFFFFFFFF)
+                sha256 = hashlib.sha256(open(local_path, "rb").read()).hexdigest()
+                crc32 = "%08x" % (zlib.crc32(open(local_path, "rb").read()) & 0xFFFFFFFF)
                 file_size = os.path.getsize(local_path)
                 
                 # Phase 7: Raw Data Quality
