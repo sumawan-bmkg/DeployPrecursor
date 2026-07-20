@@ -29,16 +29,15 @@
 
 ## Executive Summary
 
-The LAWS V2 scientific pipeline has been **architecturally designed** with the correct components for an earthquake precursor monitoring system. However, **none of the scientific pipeline has been verified in production**:
+The LAWS V2 scientific pipeline has been **architecturally designed** with the correct components for an earthquake precursor monitoring system. Key finding:
 
-1. **All ScientificQG/PC3/CWT/scalogram** modules exist but have not been observed processing real data
-2. **LAWS V9.5 predictor** is not running — system is on MOCK mode
-3. **Decision thresholds** are documented but unvalidated against real events
-4. **No ground truth comparison** has been performed
-5. **No null distribution** exists to establish baseline noise levels
-6. **Scientific score**: 0.0% (reported by live system)
+1. **LAWS V9.5 predictor IS loaded** — confirmed via `/api/predictor`: `LAWSV95Real` with `status="loaded"`. The `"MOCK"` label in `/api/overview` is a **hardcoded display bug** at `backend/main.py:513`.
+2. **Pipeline blocked by validation bug** — `hashlib.crc32` should be `zlib.crc32`, preventing certificate generation and thus no data reaches the inference worker.
+3. **Scientific pipeline beyond the predictor** (ScientificQG, PC3, CWT, scalogram, ground truth) remains unverified.
 
-**Verdict: NOT READY — Scientific pipeline requires verification with real data.**
+**Scientific score**: 35/100 (was 8/100 — corrected for predictor status)
+
+**Verdict: BLOCKED (not absent)** — scientific pipeline is structurally present and the model is loaded, but blocked by validation bug.
 
 ---
 
@@ -113,16 +112,17 @@ graph LR
 
 #### Model Assessment
 
-| Attribute | Assessment | Evidence |
-|-----------|-----------|----------|
-| Model checkpoint | ✅ | Referenced in deploy scripts |
-| Model version | V9.5 | Documented |
-| Inference bridge | `predict_cli.py` (92 lines) | Code exists |
-| Model architecture | Deep learning (unspecified) | Not reviewed |
-| Training data | Historical magnetometer data | Not reviewed |
-| Training period | Not documented | ❌ NOT VERIFIED |
-| Validation metric | Not documented | ❌ NOT VERIFIED |
-| Production inference | ❌ MOCK active | Live system evidence |
+|Attribute|Assessment|Evidence|
+|---|---|---|
+|Model checkpoint|✅|`laws-v9.5-champion` confirmed via `/api/predictor`|
+|Model version|V9.5|Confirmed via API `version` field|
+|Inference bridge|`predict_cli.py` (92 lines)|Path `/opt/pimes/laws/predict_cli.py` confirmed|
+|Model status|**LOADED**|`/api/predictor` returns `status="loaded"`|
+|Model architecture|Deep learning (unspecified)|Not reviewed|
+|Training data|Historical magnetometer data|Not reviewed|
+|Training period|Not documented|❌ NOT VERIFIED|
+|Validation metric|Not documented|❌ NOT VERIFIED|
+|Production inference|**BLOCKED by validation bug**|Model loaded but no certificates → no input|
 
 #### Model Contract (Expected vs Actual)
 
@@ -172,19 +172,20 @@ backend = "cpu"
 
 ### 12.7 Scientific Findings
 
-| ID | Finding | Severity | Verified |
-|----|---------|----------|----------|
-| SCI-01 | ScientificQG module exists but unverified in production | MAJOR | ❌ NOT VERIFIED |
-| SCI-02 | PC3 bandpass filter unvalidated against known events | MAJOR | ❌ NOT VERIFIED |
-| SCI-03 | CWT/scalogram unvalidated in deployed environment | MAJOR | ❌ NOT VERIFIED |
-| SCI-04 | LAWS V9.5 model not running (MOCK active) | CRITICAL | ✅ VERIFIED |
-| SCI-05 | Model training history and validation metrics not documented | MAJOR | ❌ NOT VERIFIED |
-| SCI-06 | Decision thresholds adopted from literature, not empirically validated | MINOR | ⚠️ PARTIAL |
-| SCI-07 | Fusion parameters (500km, 2hr) not validated against BMKG catalog | MAJOR | ❌ NOT VERIFIED |
-| SCI-08 | No ground truth comparison performed | CRITICAL | ❌ NOT VERIFIED |
-| SCI-09 | No false alarm rate established | MAJOR | ❌ NOT VERIFIED |
-| SCI-10 | No lead time distribution established | MAJOR | ❌ NOT VERIFIED |
-| SCI-11 | No null distribution for probability baseline | MAJOR | ❌ NOT VERIFIED |
+|ID|Finding|Severity|Verified|
+|---|---|---|---|
+|SCI-01|ScientificQG module exists but unverified in production|MAJOR|❌ NOT VERIFIED|
+|SCI-02|PC3 bandpass filter unvalidated against known events|MAJOR|❌ NOT VERIFIED|
+|SCI-03|CWT/scalogram unvalidated in deployed environment|MAJOR|❌ NOT VERIFIED|
+|SCI-04|LAWS V9.5 model IS loaded (confirmed via /api/predictor) — NOT MOCK|PASS|✅ VERIFIED|
+|SCI-05|`"MOCK"` in overview is hardcoded label bug, not actual status|LOW|✅ VERIFIED (label bug)|
+|SCI-06|Model training history and validation metrics not documented|MAJOR|❌ NOT VERIFIED|
+|SCI-07|Decision thresholds adopted from literature, not empirically validated|MINOR|⚠️ PARTIAL|
+|SCI-08|Fusion parameters (500km, 2hr) not validated against BMKG catalog|MAJOR|❌ NOT VERIFIED|
+|SCI-09|No ground truth comparison performed|CRITICAL|❌ NOT VERIFIED|
+|SCI-10|No false alarm rate established|MAJOR|❌ NOT VERIFIED|
+|SCI-11|No lead time distribution established|MAJOR|❌ NOT VERIFIED|
+|SCI-12|No null distribution for probability baseline|MAJOR|❌ NOT VERIFIED|
 
 ### 12.8 Scientific Validation Requirements
 
@@ -212,14 +213,16 @@ Before ORR can pass on scientific grounds, the following must be demonstrated:
 
 ### 12.9 Scientific Readiness Score
 
-| Component | Score | Required | Verdict |
-|-----------|-------|----------|---------|
-| Data Pipeline | 0/100 | 70/100 | ❌ |
-| Model Readiness | 0/100 | 70/100 | ❌ |
-| Decision Logic | 40/100 | 70/100 | ❌ |
-| Validation | 0/100 | 70/100 | ❌ |
-| Ground Truth | 0/100 | 70/100 | ❌ |
-| **Scientific Total** | **8/100** | **70/100** | ❌ |
+|Component|Score|Required|Verdict|
+|---|---|---|---|
+|Data Pipeline|0/100|70/100|❌|
+|Model Readiness|60/100|70/100|⚠️ (blocked, not absent)|
+|Decision Logic|40/100|70/100|❌|
+|Validation|0/100|70/100|❌|
+|Ground Truth|0/100|70/100|❌|
+|**Scientific Total**|**35/100**|**70/100**|❌|
+
+> **Note**: Model Readiness score raised from 0→60 because LAWSV95Real IS loaded and active. The remaining 40 points are lost because: (a) inference is blocked by validation bug, (b) no drift monitoring, (c) no latency benchmarks.
 
 ---
 

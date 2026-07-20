@@ -35,7 +35,7 @@
 | 1 | Architecture Review | MINOR ISSUE |
 | 2 | Infrastructure Review | MINOR ISSUE |
 | 3 | Pipeline Review | MAJOR ISSUE |
-| 4 | Predictor Review | MAJOR ISSUE |
+| 4 | Predictor Review | MINOR ISSUE |
 | 5 | Database Review | PASS |
 | 6 | Worker Review | MINOR ISSUE |
 | 7 | API Review | PASS |
@@ -46,14 +46,15 @@
 
 ## Executive Summary
 
-The LAWS V2 Operational Shadow system is **architecturally sound** but has **two critical production defects** discovered during this review:
+The LAWS V2 Operational Shadow system is **architecturally sound** with **one critical production defect** discovered during this review:
 
 1. **Validation Worker Bug** — `hashlib.crc32` should be `zlib.crc32`, causing ALL validation to fail in production
-2. **Predictor Status** — System running on `MOCK` predictor, not the real LAWS V9.5 model
 
-These two defects prevent the pipeline from operating end-to-end. The database, API, and dashboard infrastructure are functional.
+**The predictor (LAWSV95Real) IS loaded correctly.** The `"MOCK"` label in `/api/overview` is a **hardcoded string** in `backend/main.py:513` — a display bug, NOT a pipeline issue. `InferenceWorker` uses `LAWSRealPredictor()` and `/api/predictor` confirms `model_name="LAWSV95Real"` with `status="loaded"`.
 
-**Verdict: CONDITIONAL PASS — Blockers identified, must be resolved before ORR.**
+The validation bug blocks the pipeline from operating end-to-end. The database, predictor, API, and dashboard infrastructure are otherwise functional.
+
+**Verdict: BLOCKED (not structural) — fix validation bug, correct overview label.**
 
 ---
 
@@ -136,8 +137,8 @@ graph TD
 | ARCH-02 | Scheduler correctly registers 6 workers | PASS | ✅ VERIFIED |
 | ARCH-03 | Backend API serves 15+ endpoints | PASS | ✅ VERIFIED |
 | ARCH-04 | DB pool with lazy init handles connection failure gracefully | PASS | ✅ VERIFIED |
-| ARCH-05 | Validation worker uses `hashlib.crc32` — should be `zlib.crc32` | MAJOR | ✅ VERIFIED |
-| ARCH-06 | MockPredictor active, LAWS V9.5 predictor not verified in production | MAJOR | ✅ VERIFIED |
+| ARCH-05 | Validation worker uses `hashlib.crc32` — should be `zlib.crc32` | CRITICAL | ✅ VERIFIED |
+| ARCH-06 | `/api/overview` shows `"MOCK"` due to hardcoded string — not pipeline issue | LOW | ✅ VERIFIED (label bug) |
 | ARCH-07 | No graceful degradation when SFTP connection drops | MINOR | ❌ NOT VERIFIED |
 | ARCH-08 | No circuit breaker pattern for predictor failures | MINOR | ⚠️ PARTIAL |
 | ARCH-09 | Thread pool sizing not configurable | LOW | ✅ VERIFIED |
@@ -154,7 +155,7 @@ graph TD
 | Python | 3.11+ (venv) | `/opt/pimes/laws/runtime/.venv/bin/python` | PASS |
 | Virtual Environment | Exists and functional | Module imports succeed | PASS |
 | Filesystem | `/opt/pimes/pocc/` writable | Files created daily | PASS |
-| Scheduler | Running 1 process | `ps aux | grep collector` | PASS |
+| Scheduler | Running 1 process | `ps aux \| grep collector` | PASS |
 | Backend API | 1 uvicorn process | `http://10.20.229.43:8500` returns 200 | PASS |
 | PostgreSQL | Pool active, driver connected | `{"status":"OK","pool":true}` | PASS |
 | Logging | `collector.log` active | Log timestamps current | PASS |
@@ -221,13 +222,13 @@ graph LR
 
 > **Figure ORR1.2** — Pipeline health status. Red stages block end-to-end flow.
 
-### 3.3 Critical Finding: Validation Bug
+### 3.3 Critical Finding: Validation Bug (ONE blocker)
 
 ```
 Evidence from /api/overview (live, 2026-07-20):
   ERROR Validation error download_TUN_2016.json: module 'hashlib' has no attribute 'crc32'
   ERROR Validation error download_TUN_2017.json: module 'hashlib' has no attribute 'crc32'
-  ... (repeated for all download files)
+  ... (repeated for ALL download files)
 ```
 
 **Root Cause**: `validation_worker.py` uses `hashlib.crc32()` but CRC32 is in `zlib`, not `hashlib`.
@@ -236,14 +237,14 @@ Evidence from /api/overview (live, 2026-07-20):
 
 **Fix Required**:
 ```python
-# In validation_worker.py:
+# In validation_worker.py line 40:
 # WRONG:
 import hashlib
-crc = hashlib.crc32(data)
+crc32 = hashlib.crc32(data)
 
 # CORRECT:
 import zlib
-crc = zlib.crc32(data)
+crc32 = zlib.crc32(data)
 ```
 
 ### 3.4 Pipeline Findings
@@ -251,26 +252,43 @@ crc = zlib.crc32(data)
 | ID | Finding | Severity | Verified |
 |----|---------|----------|----------|
 | PIPE-01 | Validation worker has `hashlib.crc32` bug — all validation fails | CRITICAL | ✅ VERIFIED |
-| PIPE-02 | Inference worker running MOCK, not LAWS V9.5 | MAJOR | ✅ VERIFIED |
-| PIPE-03 | Discovery/Download in STANDBY — may not be actively scanning | MINOR | ⚠️ PARTIAL |
-| PIPE-04 | No end-to-end pipeline test exists in production | MINOR | ✅ VERIFIED |
-| PIPE-05 | Evidence builder running but generating 0% scientific score | MINOR | ✅ VERIFIED |
-| PIPE-06 | Pipeline chain is correctly ordered architecturally | PASS | ✅ VERIFIED |
+| PIPE-02 | LAWSV95Real predictor loaded correctly — NOT a pipeline blocker | PASS | ✅ VERIFIED via /api/predictor |
+| PIPE-03 | `"MOCK"` label in overview is hardcoded string, not actual status | LOW | ✅ VERIFIED via /api/predictor |
+| PIPE-04 | Discovery/Download in STANDBY — may not be actively scanning | MINOR | ⚠️ PARTIAL |
+| PIPE-05 | No end-to-end pipeline test exists in production | MINOR | ✅ VERIFIED |
+| PIPE-06 | Evidence builder running but generating 0% scientific score | MINOR | ✅ VERIFIED |
+| PIPE-07 | Pipeline chain is correctly ordered architecturally | PASS | ✅ VERIFIED |
 
 ---
 
 ## Phase 4 — Predictor Review
 
-### 4.1 Predictor Status
+### 4.1 Predictor Status (UPDATED — after verification)
 
 | Component | Status | Evidence |
 |-----------|--------|----------|
 | Predictor Base (`predictor_base.py`) | EXISTS | 117 lines, `Prediction` dataclass with 30 fields |
 | LAWS Predictor (`laws_predictor.py`) | EXISTS | 109 lines, subprocess bridge to `predict_cli.py` |
-| Mock Predictor (`mock_predictor.py`) | ACTIVE | System overview shows `prediction: "MOCK"` |
-| Predict CLI | EXISTS | `laws/predict_cli.py` (92 lines) |
-| Model Checkpoint | EXISTS | Referenced in deploy scripts |
-| Real Inference | NOT VERIFIED | No evidence of real LAWS V9.5 model execution |
+| LAWSV95Real | **LOADED** | `/api/predictor` confirms `status="loaded"` |
+| Mock Predictor (`mock_predictor.py`) | FALLBACK ONLY | Active only as fallback per `/api/predictor` |
+| Predict CLI | EXISTS | `laws/predict_cli.py` (92 lines), path confirmed in endpoint |
+| Model Checkpoint | EXISTS | `laws-v9.5-champion` confirmed via API |
+| Real Inference | **BLOCKED** | Pipeline blocked by validation bug — no certificates to process |
+
+### 4.1a CORRECTION: `"MOCK"` Label Bug
+
+The `/api/overview` endpoint returns `"prediction": "MOCK"` because of a **hardcoded string** at `backend/main.py:513`:
+```python
+result["pipeline"] = {
+    ...
+    "prediction": "MOCK",  # ← ALWAYS "MOCK" regardless of actual predictor
+    ...
+}
+```
+This was never updated when the real predictor was deployed. It is a **display bug**, not a pipeline issue. The `/api/predictor` endpoint returns the correct status: `LAWSV95Real` with `status="loaded"`.
+
+**Impact**: None on pipeline operation. Only affects operator display.
+**Fix**: 5-minute code change — remove hardcoded `"MOCK"` and derive from actual predictor status.
 
 ### 4.2 Prediction Contract
 
@@ -297,12 +315,13 @@ class Prediction:
 
 | ID | Finding | Severity | Verified |
 |----|---------|----------|----------|
-| PRED-01 | MockPredictor is active, not LAWS V9.5 | MAJOR | ✅ VERIFIED |
-| PRED-02 | `predict_cli.py` exists but not invoked in production | MAJOR | ⚠️ PARTIAL |
-| PRED-03 | Fallback to MockPredictor on model failure — correct behavior | PASS | ✅ VERIFIED |
-| PRED-04 | Prediction dataclass has 30 fields — complete contract | PASS | ✅ VERIFIED |
-| PRED-05 | No drift monitoring active | MINOR | ✅ VERIFIED |
-| PRED-06 | No latency benchmark for real model | MINOR | ❌ NOT VERIFIED |
+| PRED-01 | LAWSV95Real model loaded and active — `status="loaded"` confirmed via /api/predictor | PASS | ✅ VERIFIED |
+| PRED-02 | `"MOCK"` label in /api/overview is hardcoded string at backend/main.py:513 — display bug | LOW | ✅ VERIFIED |
+| PRED-03 | `predict_cli.py` exists and CLI path correctly configured at `/opt/pimes/laws/predict_cli.py` | PASS | ✅ VERIFIED |
+| PRED-04 | Fallback to MockPredictor on model failure — correct behavior | PASS | ✅ VERIFIED |
+| PRED-05 | Prediction dataclass has 30 fields — complete contract | PASS | ✅ VERIFIED |
+| PRED-06 | No drift monitoring active | MINOR | ✅ VERIFIED |
+| PRED-07 | No latency benchmark for real model | MINOR | ❌ NOT VERIFIED |
 
 ---
 
@@ -374,7 +393,8 @@ Response: {"status":"OK","pool":true,"driver":true}
 | WORK-03 | Validation worker crashes every cycle due to `hashlib.crc32` | CRITICAL | ✅ VERIFIED |
 | WORK-04 | No automatic restart of crashed workers | MINOR | ✅ VERIFIED |
 | WORK-05 | Worker status persists to `collector_manifest.json` | PASS | ✅ VERIFIED |
-| WORK-06 | Inference worker processes zero files (blocked by validation) | MAJOR | ✅ VERIFIED |
+| WORK-06 | Inference worker processes zero files (blocked by validation bug) | MAJOR | ✅ VERIFIED |
+| WORK-07 | Inference worker correctly loads LAWSRealPredictor, not MockPredictor | PASS | ✅ VERIFIED via code review |
 
 ---
 
@@ -468,32 +488,35 @@ GET /api/db-health
 
 | Category | Score | Weight | Weighted |
 |----------|-------|--------|----------|
-| Architecture | 75 | 15% | 11.25 |
+| Architecture | 80 | 15% | 12.00 |
 | Infrastructure | 80 | 10% | 8.00 |
-| Pipeline | 40 | 20% | 8.00 |
-| Predictor | 30 | 15% | 4.50 |
+| Pipeline | 55 | 20% | 11.00 |
+| Predictor | 70 | 15% | 10.50 |
 | Database | 90 | 10% | 9.00 |
-| Workers | 60 | 10% | 6.00 |
+| Workers | 65 | 10% | 6.50 |
 | API | 85 | 10% | 8.50 |
 | Dashboard | 75 | 10% | 7.50 |
-| **TOTAL** | | **100%** | **62.75 / 100** |
+| **TOTAL** | | **100%** | **73.00 / 100** |
 
 ### Go/No-Go Decision
 
 > [!WARNING]
-> **DECISION: NO-GO — Technical Blockers**
+> **DECISION: CONDITIONAL — ONE BLOCKER**
 >
-> Two critical defects prevent pipeline operation:
+> One critical defect prevents pipeline operation:
 >
-> 1. **Validation Bug** (`hashlib.crc32`) — blocks all certificate generation
-> 2. **MOCK Predictor** — no real inference running
+> 1. **Validation Bug** (`hashlib.crc32` → `zlib.crc32`) — blocks all certificate generation
 >
-> **Required Actions Before Re-Review:**
+> **NOT a blocker (CORRECTED):**
+> - ~~MockPredictor~~ — LAWSV95Real IS loaded and active (confirmed via `/api/predictor`)
+> - `"MOCK"` in `/api/overview` is a **hardcoded label bug** at `backend/main.py:513`
+>
+> **Required Actions Before Full ORR:**
 > - Fix validation_worker.py: replace `hashlib.crc32` with `zlib.crc32`
-> - Deploy real LAWS V9.5 predictor and verify inference
+> - Fix overview label: derive from actual predictor status instead of hardcoded string
 > - Run end-to-end pipeline test with real data
 >
-> **Estimated Time to Fix**: 1–2 hours
+> **Estimated Time to Fix**: 1 hour (validation) + 5 minutes (label)
 
 ---
 
